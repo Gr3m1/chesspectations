@@ -3,12 +3,14 @@ package mate.check.chesspectations.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mate.check.chesspectations.model.Leaderboard;
 import mate.check.chesspectations.model.ChessMatch;
+import mate.check.chesspectations.model.Leaderboard;
 import mate.check.chesspectations.service.LeaderboardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/leaderboard")
@@ -20,9 +22,9 @@ public class LeaderboardController {
 
     // get Leaderboard
     @GetMapping
-    public ResponseEntity<Leaderboard> getLeaderboard() {
+    public ResponseEntity<List<Leaderboard>> getLeaderboard() throws Exception {
         log.info("Starting call to get all player details");
-        Leaderboard leaderboard = leaderboardService.getLeaderboard();
+        List<Leaderboard> leaderboard = leaderboardService.getLeaderboard();
         return ResponseEntity.ok(leaderboard);
     }
 

@@ -1,16 +1,16 @@
 package mate.check.chesspectations.service;
 
+import mate.check.chesspectations.exception.LeaderboardException;
 import mate.check.chesspectations.model.ChessMatch;
 import mate.check.chesspectations.model.Leaderboard;
 
+import java.util.List;
+
 public interface LeaderboardService {
 
-    // get Leaderboard
-    Leaderboard getLeaderboard();
+    List<Leaderboard> getLeaderboard() throws LeaderboardException;
 
-    // get player by rank
     String getPlayerByRank(int rank);
 
-    // add match
     ChessMatch addChessMatch(ChessMatch chessMatch);
 }
