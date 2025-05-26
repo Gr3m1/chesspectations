@@ -20,7 +20,6 @@ public class LeaderboardController {
 
     private final LeaderboardService leaderboardService;
 
-    // get Leaderboard
     @GetMapping
     public ResponseEntity<List<Leaderboard>> getLeaderboard() throws Exception {
         log.info("Starting call to get all player details");
@@ -30,15 +29,20 @@ public class LeaderboardController {
 
     // get player name by rank
     @GetMapping("/getByRank/{rank}")
-    public ResponseEntity<String> getPlayerByRank(@PathVariable("rank") int rank) {
+    public ResponseEntity<String> getPlayerByRank(@PathVariable("rank") int rank) throws Exception {
         log.info("Starting call to get player name at rank [{}]", rank);
+
+        if (rank <= 0) {
+            return ResponseEntity.badRequest().body("Rank must be a positive number");
+        }
+
         String playerName = leaderboardService.getPlayerByRank(rank);
         return ResponseEntity.ok(playerName);
     }
 
     // add match
     @PostMapping("/matches")
-    public ResponseEntity<ChessMatch> addChessMatch(@RequestBody @Valid ChessMatch chessMatch) {
+    public ResponseEntity<ChessMatch> addChessMatch(@RequestBody @Valid ChessMatch chessMatch) throws Exception {
         log.info("Starting call to add new chess match");
         ChessMatch addedChessMatch = leaderboardService.addChessMatch(chessMatch);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedChessMatch);

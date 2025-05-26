@@ -1,7 +1,7 @@
 package mate.check.chesspectations.service;
 
 import mate.check.chesspectations.TestConstants;
-import mate.check.chesspectations.exception.LeaderboardException;
+import mate.check.chesspectations.exception.GenericException;
 import mate.check.chesspectations.model.Leaderboard;
 import mate.check.chesspectations.repository.RankingRepository;
 import mate.check.chesspectations.service.impl.LeaderboardServiceImpl;
@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 
@@ -28,15 +29,12 @@ public class LeaderboardServiceTests {
 
     // get Leaderboard
     @Test
-    void testGetLeaderboardSuccess() throws LeaderboardException {
-        // given
+    void testGetLeaderboardSuccess() throws GenericException {
         List<Leaderboard> mockLeaderboard = TestConstants.getLeaderboard();
-        // when
         when(rankingRepository.getLeaderboard()).thenReturn(mockLeaderboard);
 
         List<Leaderboard> resultList = leaderboardService.getLeaderboard();
 
-        // then
         Assertions.assertNotNull(resultList);
         Assertions.assertEquals(mockLeaderboard.size(), resultList.size());
         Assertions.assertEquals(mockLeaderboard, resultList);
@@ -44,38 +42,52 @@ public class LeaderboardServiceTests {
 
     @Test
     void testGetLeaderboardFailure() {
-        // given
         List<Leaderboard> emptyLeaderboard = new ArrayList<>();
-        // when
         when(rankingRepository.getLeaderboard()).thenReturn(emptyLeaderboard);
 
-        LeaderboardException exception = Assertions.assertThrows(LeaderboardException.class, () -> {
+        GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
             leaderboardService.getLeaderboard();
         });
 
         Assertions.assertEquals("Uh oh! Something went wrong.", exception.getMessage());
     }
-//
-//    // get player by rank
-//    @Test
-//    void getPlayerRankSuccess() {
-//
-//    }
-//
-//    @Test
-//    void testGetPlayerRankFailure() {
-//
-//    }
-//
-//    // add match
+
+    // get player by rank
+    @Test
+    void getPlayerRankSuccess() throws GenericException {
+        String playerName = "Jenny Queen";
+        int rank = 4;
+        when(rankingRepository.getPlayerNameByRank(rank)).thenReturn(Optional.of(playerName));
+
+        String result = leaderboardService.getPlayerByRank(rank);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(playerName, result);
+    }
+
+    @Test
+    void testGetPlayerRankFailure() {
+        int rank = 4;
+        when(rankingRepository.getPlayerNameByRank(rank)).thenReturn(Optional.empty());
+
+        GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
+            leaderboardService.getPlayerByRank(rank);
+        });
+
+        Assertions.assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+    }
+
+    // add match
 //    @Test
 //    void testAddMatchSuccess() {
-//
+//        // test save successful
+//        // test ranking update successful
 //    }
 //
 //    @Test
 //    void testAddMatchFailure() {
-//
+//        // test save failure
+//        // test ranking update failure...
 //    }
 
     // update rankings high winner - no ranking change
