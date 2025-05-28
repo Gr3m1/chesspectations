@@ -13,7 +13,7 @@ public interface LeaderboardService {
 
     String getPlayerByRank(int rank) throws GenericException;
 
-    ChessMatch addChessMatch(ChessMatch chessMatch) throws GenericException;
+    List<Leaderboard> addChessMatch(ChessMatch chessMatch) throws GenericException;
 
     PlayerRank addNewPlayer(String playerId) throws GenericException;
 }

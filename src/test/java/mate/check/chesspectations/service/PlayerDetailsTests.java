@@ -2,7 +2,7 @@ package mate.check.chesspectations.service;
 
 import mate.check.chesspectations.TestConstants;
 import mate.check.chesspectations.exception.GenericException;
-import mate.check.chesspectations.model.PlayerDetail;
+import mate.check.chesspectations.model.PlayerDetails;
 import mate.check.chesspectations.model.PlayerRank;
 import mate.check.chesspectations.repository.PlayerDetailRepository;
 import mate.check.chesspectations.service.impl.PlayerDetailsServiceImpl;
@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,10 +32,10 @@ public class PlayerDetailsTests {
     // get all players
     @Test
     void testGetAllPlayersSuccess() throws GenericException {
-        List<PlayerDetail> playerList = TestConstants.getPlayerDetails();
+        List<PlayerDetails> playerList = TestConstants.getPlayerDetails();
         when(playerDetailRepository.findAll()).thenReturn(playerList);
 
-        List<PlayerDetail> resultList = playerDetailsService.getAllPlayers();
+        List<PlayerDetails> resultList = playerDetailsService.getAllPlayers();
 
         Assertions.assertNotNull(resultList);
         Assertions.assertEquals(playerList, resultList);
@@ -44,7 +43,7 @@ public class PlayerDetailsTests {
 
     @Test
     void testGetAllPlayersFailure() {
-        List<PlayerDetail> emptyPlayerList = new ArrayList<>();
+        List<PlayerDetails> emptyPlayerList = new ArrayList<>();
         when(playerDetailRepository.findAll()).thenReturn(emptyPlayerList);
 
         GenericException exception = Assertions.assertThrows(GenericException.class, () -> {

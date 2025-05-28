@@ -3,7 +3,7 @@ package mate.check.chesspectations.service;
 import mate.check.chesspectations.TestConstants;
 import mate.check.chesspectations.exception.GenericException;
 import mate.check.chesspectations.model.Leaderboard;
-import mate.check.chesspectations.repository.RankingRepository;
+import mate.check.chesspectations.repository.LeaderboardRepository;
 import mate.check.chesspectations.service.impl.LeaderboardServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 public class LeaderboardServiceTests {
 
     @Mock
-    private RankingRepository rankingRepository;
+    private LeaderboardRepository leaderboardRepository;
 
     @InjectMocks
     private LeaderboardServiceImpl leaderboardService;
@@ -31,7 +31,7 @@ public class LeaderboardServiceTests {
     @Test
     void testGetLeaderboardSuccess() throws GenericException {
         List<Leaderboard> mockLeaderboard = TestConstants.getLeaderboard();
-        when(rankingRepository.getLeaderboard()).thenReturn(mockLeaderboard);
+        when(leaderboardRepository.getLeaderboard()).thenReturn(mockLeaderboard);
 
         List<Leaderboard> resultList = leaderboardService.getLeaderboard();
 
@@ -43,7 +43,7 @@ public class LeaderboardServiceTests {
     @Test
     void testGetLeaderboardFailure() {
         List<Leaderboard> emptyLeaderboard = new ArrayList<>();
-        when(rankingRepository.getLeaderboard()).thenReturn(emptyLeaderboard);
+        when(leaderboardRepository.getLeaderboard()).thenReturn(emptyLeaderboard);
 
         GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
             leaderboardService.getLeaderboard();
@@ -57,7 +57,7 @@ public class LeaderboardServiceTests {
     void getPlayerRankSuccess() throws GenericException {
         String playerName = "Jenny Queen";
         int rank = 4;
-        when(rankingRepository.getPlayerNameByRank(rank)).thenReturn(Optional.of(playerName));
+        when(leaderboardRepository.getPlayerNameByRank(rank)).thenReturn(Optional.of(playerName));
 
         String result = leaderboardService.getPlayerByRank(rank);
 
@@ -68,7 +68,7 @@ public class LeaderboardServiceTests {
     @Test
     void testGetPlayerRankFailure() {
         int rank = 4;
-        when(rankingRepository.getPlayerNameByRank(rank)).thenReturn(Optional.empty());
+        when(leaderboardRepository.getPlayerNameByRank(rank)).thenReturn(Optional.empty());
 
         GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
             leaderboardService.getPlayerByRank(rank);

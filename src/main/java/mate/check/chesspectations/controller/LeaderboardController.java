@@ -27,7 +27,6 @@ public class LeaderboardController {
         return ResponseEntity.ok(leaderboard);
     }
 
-    // get player name by rank
     @GetMapping("/getByRank/{rank}")
     public ResponseEntity<String> getPlayerByRank(@PathVariable("rank") int rank) throws Exception {
         log.info("Starting call to get player name at rank [{}]", rank);
@@ -40,11 +39,10 @@ public class LeaderboardController {
         return ResponseEntity.ok(playerName);
     }
 
-    // add match
     @PostMapping("/matches")
-    public ResponseEntity<ChessMatch> addChessMatch(@RequestBody @Valid ChessMatch chessMatch) throws Exception {
+    public ResponseEntity<List<Leaderboard>> addChessMatch(@RequestBody @Valid ChessMatch chessMatch) throws Exception {
         log.info("Starting call to add new chess match");
-        ChessMatch addedChessMatch = leaderboardService.addChessMatch(chessMatch);
-        return ResponseEntity.status(HttpStatus.CREATED).body(addedChessMatch);
+        List<Leaderboard> newLeaderboard = leaderboardService.addChessMatch(chessMatch);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newLeaderboard);
     }
 }

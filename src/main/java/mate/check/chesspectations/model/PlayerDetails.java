@@ -5,11 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
 
 @Data
-public class PlayerDetail {
+@Table(name = "player_details", schema = "chessdata")
+public class PlayerDetails {
 
     @Id
     private String id;
