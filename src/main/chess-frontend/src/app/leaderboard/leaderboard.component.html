@@ -1,0 +1,29 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ranchers&display=swap" rel="stylesheet">
+
+<div>
+  <div class="header-container">
+    <h1 class="header-text">Chesspectations</h1>
+  </div>
+
+  <div class="leaderboard-container">
+    <table mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="ranking">
+        <th mat-header-cell *matHeaderCellDef class="cell"> Rank</th>
+        <td mat-cell *matCellDef="let leaderboard" class="cell"> {{ leaderboard.ranking }}</td>
+      </ng-container>
+      <ng-container matColumnDef="playerName">
+        <th mat-header-cell *matHeaderCellDef class="cell"> Name</th>
+        <td mat-cell *matCellDef="let leaderboard" class="cell"> {{ leaderboard.playerName }}</td>
+      </ng-container>
+      <ng-container matColumnDef="gamesPlayed">
+        <th mat-header-cell *matHeaderCellDef class="cell"> Games Played</th>
+        <td mat-cell *matCellDef="let leaderboard" class="cell"> {{ leaderboard.gamesPlayed }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table-headers"></tr>
+      <tr mat-row *matRowDef="let myRowData; columns: displayedColumns"></tr>
+    </table>
+  </div>
+
+</div>

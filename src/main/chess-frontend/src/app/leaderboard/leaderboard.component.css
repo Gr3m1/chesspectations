@@ -1,0 +1,40 @@
+.header-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-text {
+  font-family: 'Ranchers', sans-serif;
+  font-size: 140px;
+  font-weight: 400;
+  font-style: normal;
+  text-shadow: 2px 2px #fff;
+  position: relative;
+  top: 9px;
+}
+
+.leaderboard-container {
+  padding: 20px;
+  background: #fff;
+  align-items: center;
+  margin: 0 auto;
+  width: 80%;
+}
+
+.leaderboard-container:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.table-headers {
+  font-size: 30px;
+}
+
+.cell {
+  text-align: center;
+}
+
+table {
+  width: 100%;
+}
+
