@@ -3,8 +3,9 @@ package mate.check.chesspectations.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mate.check.chesspectations.model.PlayerRank;
+import mate.check.chesspectations.model.Leaderboard;
 import mate.check.chesspectations.model.PlayerDetails;
+import mate.check.chesspectations.model.PlayerRank;
 import mate.check.chesspectations.service.PlayerDetailsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/v1/players")
 @Slf4j
@@ -20,32 +22,18 @@ public class PlayerDetailsController {
 
     private final PlayerDetailsService playerDetailsService;
 
-    @GetMapping
-    public ResponseEntity<List<PlayerDetails>> getAllPlayers() throws Exception {
-        log.info("Starting call to get all player details");
-        List<PlayerDetails> allPlayers = playerDetailsService.getAllPlayers();
-        return ResponseEntity.ok(allPlayers);
-    }
-
-    @GetMapping("/byName/{name}")
-    public ResponseEntity<PlayerRank> getPlayerByName(@PathVariable ("name") String name) throws Exception {
-        log.info("Starting call to get details for player [{}]", name);
-        PlayerRank playerDetail = playerDetailsService.getPlayerByName(name);
-        return ResponseEntity.ok(playerDetail);
-    }
-
-    @GetMapping("/byEmail/{email}")
-    public ResponseEntity<PlayerRank> getPlayerByEmail(@PathVariable ("email") String email) throws Exception {
-        log.info("Starting call to get details for player with email address [{}]", email);
-        PlayerRank playerDetail = playerDetailsService.getPlayerByEmail(email);
+    @GetMapping("/byId/{id}")
+    public ResponseEntity<PlayerRank> getPlayerById(@PathVariable("id") String id) throws Exception {
+        log.info("Starting call to get player details for ID [{}]", id);
+        PlayerRank playerDetail = playerDetailsService.getPlayerById(id);
         return ResponseEntity.ok(playerDetail);
     }
 
     @PostMapping("/newPlayer")
-    public ResponseEntity<PlayerRank> addNewPlayer(@RequestBody @Valid PlayerDetails playerDetails) throws Exception {
+    public ResponseEntity<List<Leaderboard>> addNewPlayer(@RequestBody @Valid PlayerDetails playerDetails) throws Exception {
         log.info("Starting call to add a new player with name [{}]", playerDetails.getPlayerName());
-        PlayerRank newPlayer = playerDetailsService.addNewPlayer(playerDetails);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newPlayer);
+        List<Leaderboard> newPlayerAddedList = playerDetailsService.addNewPlayer(playerDetails);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newPlayerAddedList);
     }
 
     @PutMapping("/update")
@@ -59,17 +47,10 @@ public class PlayerDetailsController {
         return ResponseEntity.ok(updatedPlayer);
     }
 
-    @DeleteMapping("/removeByName/{name}")
-    public ResponseEntity<Void> removePlayerByName(@PathVariable ("name") String name) throws Exception {
-        log.info("Starting call to remove details for player with name [{}]", name);
-        playerDetailsService.removePlayerByName(name);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/removeByEmail/{email}")
-    public ResponseEntity<Void> removePlayerByEmail(@PathVariable ("email") String email) throws Exception {
-        log.info("Starting call to remove details for player with email address [{}]", email);
-        playerDetailsService.removePlayerByEmail(email);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/removePlayer/{id}")
+    public ResponseEntity<List<Leaderboard>> removePlayerById(@PathVariable("id") String id) throws Exception {
+        log.info("Starting call to remove player with id [{}]", id);
+        List<Leaderboard> removedPlayerList = playerDetailsService.removePlayerById(id);
+        return ResponseEntity.ok(removedPlayerList);
     }
 }

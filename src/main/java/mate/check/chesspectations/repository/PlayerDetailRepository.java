@@ -14,28 +14,13 @@ import java.util.Optional;
 @Repository
 public interface PlayerDetailRepository extends CrudRepository<PlayerDetails, String> {
 
-    @Query("""
+   @Query("""
             SELECT p.id, p.player_name, p.email_address, p.date_of_birth, p.games_played, r.ranking
             FROM chessdata.player_details p
             INNER JOIN chessdata.ranking r on p.id = r.player_id
-            WHERE p.player_name = :name
+            WHERE p.id = :id
             """)
-    Optional<PlayerRank> getPlayerByName(String name);
-
-    @Query("""
-            SELECT p.id, p.player_name, p.email_address, p.date_of_birth, p.games_played, r.ranking
-            FROM chessdata.player_details p
-            INNER JOIN chessdata.ranking r on p.id = r.player_id
-            WHERE p.email_address = :email
-            """)
-    Optional<PlayerRank> getPlayerByEmail(String email);
-
-    @Query("""
-            SELECT *
-            FROM chessdata.player_details
-            WHERE id = :id;
-            """)
-    Optional<PlayerDetails> getPlayerById(String id);
+    Optional<PlayerRank> getPlayerById(String id);
 
     @Modifying
     @Transactional

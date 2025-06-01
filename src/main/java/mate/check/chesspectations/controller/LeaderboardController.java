@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/v1/leaderboard")
 @Slf4j
@@ -25,18 +26,6 @@ public class LeaderboardController {
         log.info("Starting call to get all player details");
         List<Leaderboard> leaderboard = leaderboardService.getLeaderboard();
         return ResponseEntity.ok(leaderboard);
-    }
-
-    @GetMapping("/getByRank/{rank}")
-    public ResponseEntity<String> getPlayerByRank(@PathVariable("rank") int rank) throws Exception {
-        log.info("Starting call to get player name at rank [{}]", rank);
-
-        if (rank <= 0) {
-            return ResponseEntity.badRequest().body("Rank must be a positive number");
-        }
-
-        String playerName = leaderboardService.getPlayerByRank(rank);
-        return ResponseEntity.ok(playerName);
     }
 
     @PostMapping("/matches")

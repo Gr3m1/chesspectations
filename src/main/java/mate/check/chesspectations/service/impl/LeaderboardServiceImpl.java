@@ -42,29 +42,16 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     }
 
     @Override
-    public String getPlayerByRank(int rank) throws GenericException {
-        log.info("About to retrieve chess player at rank [{}]", rank);
-        Optional<String> playerName = leaderboardRepository.getPlayerNameByRank(rank);
-
-        if (playerName.isPresent()) {
-            return playerName.get();
-        } else {
-            log.error("Unable to retrieve chess player at rank [{}]", rank);
-            throw new GenericException("Uh oh! Something went wrong.");
-        }
-    }
-
-    @Override
     @Transactional
     public List<Leaderboard> addChessMatch(ChessMatch chessMatch) throws GenericException {
         log.info("Adding match between [{}] and [{}]", chessMatch.getEbonyPlayerId(), chessMatch.getIvoryPlayerId());
 
-        PlayerDetails ebonyPlayer;
-        PlayerDetails ivoryPlayer;
+        PlayerRank ebonyPlayer;
+        PlayerRank ivoryPlayer;
 
         try {
-            Optional<PlayerDetails> ebonyPlayerDetail = playerDetailRepository.getPlayerById(chessMatch.getEbonyPlayerId());
-            Optional<PlayerDetails> ivoryPlayerDetail = playerDetailRepository.getPlayerById(chessMatch.getIvoryPlayerId());
+            Optional<PlayerRank> ebonyPlayerDetail = playerDetailRepository.getPlayerById(chessMatch.getEbonyPlayerId());
+            Optional<PlayerRank> ivoryPlayerDetail = playerDetailRepository.getPlayerById(chessMatch.getIvoryPlayerId());
 
             if (ebonyPlayerDetail.isPresent()) {
                 ebonyPlayer = ebonyPlayerDetail.get();
@@ -103,7 +90,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     }
 
     @Override
-    public PlayerRank addNewPlayer(String playerId) throws GenericException {
+    public List<Leaderboard> addNewPlayer(String playerId) throws GenericException {
         log.info("Adding new player to leaderboard");
 
         try {
@@ -115,7 +102,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
             rankingRepository.saveNewRanking(newPlayerRanking.getId(), newPlayerRanking.getPlayerId(), newPlayerRanking.getRanking());
 
-            return leaderboardRepository.getPlayerRank(playerId);
+            return leaderboardRepository.getLeaderboard();
 
         } catch (Exception e) {
             log.error("Unable to add new player with ID [{}]. Error: [{}]", playerId, e.getMessage(), e);

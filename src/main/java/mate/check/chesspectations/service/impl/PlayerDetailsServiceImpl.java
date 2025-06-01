@@ -3,6 +3,7 @@ package mate.check.chesspectations.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mate.check.chesspectations.exception.GenericException;
+import mate.check.chesspectations.model.Leaderboard;
 import mate.check.chesspectations.model.PlayerDetails;
 import mate.check.chesspectations.model.PlayerRank;
 import mate.check.chesspectations.repository.PlayerDetailRepository;
@@ -13,12 +14,9 @@ import mate.check.chesspectations.service.RankingService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -31,51 +29,22 @@ public class PlayerDetailsServiceImpl implements PlayerDetailsService {
     private final RankingService rankingService;
 
     @Override
-    public List<PlayerDetails> getAllPlayers() throws GenericException {
-        log.info("About to get all players");
+    public PlayerRank getPlayerById(String id) throws GenericException {
+        log.info("About to retrieve player with ID [{}]", id);
 
-        Iterable<PlayerDetails> iterPlayers = playerDetailRepository.findAll();
-
-        if (iterPlayers.iterator().hasNext()) {
-            return StreamSupport
-                    .stream(iterPlayers.spliterator(), false)
-                    .collect(Collectors.toList());
-        } else {
-            log.error("Unable to get all players");
-            throw new GenericException("Uh oh! Something went wrong.");
-        }
-    }
-
-    @Override
-    public PlayerRank getPlayerByName(String name) throws GenericException {
-        log.info("About to retrieve player with name [{}]", name);
-
-        Optional<PlayerRank> player = playerDetailRepository.getPlayerByName(name);
+        Optional<PlayerRank> player = playerDetailRepository.getPlayerById(id);
 
         if (player.isPresent()) {
             return player.get();
         } else {
-            log.error("Unable to retrieve player with name [{}]", name);
+            log.error("Unable to retrieve player with ID [{}]", id);
             throw new GenericException("Uh oh! Something went wrong.");
         }
     }
 
     @Override
-    public PlayerRank getPlayerByEmail(String email) throws GenericException {
-        log.info("About to retrieve player with email [{}]", email);
-
-        Optional<PlayerRank> player = playerDetailRepository.getPlayerByEmail(email);
-
-        if (player.isPresent()) {
-            return player.get();
-        } else {
-            log.error("Unable to retrieve player with email [{}]", email);
-            throw new GenericException("Uh oh! Something went wrong.");
-        }
-    }
-
-    @Override
-    public PlayerRank addNewPlayer(PlayerDetails playerDetails) throws GenericException {
+    @Transactional
+    public List<Leaderboard> addNewPlayer(PlayerDetails playerDetails) throws GenericException {
         log.info("About to add new player with name [{}]", playerDetails.getPlayerName());
 
         try {
@@ -94,20 +63,13 @@ public class PlayerDetailsServiceImpl implements PlayerDetailsService {
         log.info("About to update player with ID [{}]", updatedPlayerDetails.getId());
 
         try {
-            Optional<PlayerDetails> player = playerDetailRepository.getPlayerById(updatedPlayerDetails.getId());
+            PlayerRank existingPlayer = getPlayerById(updatedPlayerDetails.getId());
+            existingPlayer.setPlayerName(updatedPlayerDetails.getPlayerName() != null ? updatedPlayerDetails.getPlayerName() : existingPlayer.getPlayerName());
+            existingPlayer.setEmailAddress(updatedPlayerDetails.getEmailAddress() != null ? updatedPlayerDetails.getEmailAddress() : existingPlayer.getEmailAddress());
+            existingPlayer.setDateOfBirth(updatedPlayerDetails.getDateOfBirth() != null ? updatedPlayerDetails.getDateOfBirth() : existingPlayer.getDateOfBirth());
+            existingPlayer.setGamesPlayed(updatedPlayerDetails.getGamesPlayed() != 0 ? updatedPlayerDetails.getGamesPlayed() : existingPlayer.getGamesPlayed());
 
-            if (player.isPresent()) {
-                PlayerDetails existingPlayer = player.get();
-                existingPlayer.setPlayerName(updatedPlayerDetails.getPlayerName() != null ? updatedPlayerDetails.getPlayerName() : existingPlayer.getPlayerName());
-                existingPlayer.setEmailAddress(updatedPlayerDetails.getEmailAddress() != null ? updatedPlayerDetails.getEmailAddress() : existingPlayer.getEmailAddress());
-                existingPlayer.setDateOfBirth(updatedPlayerDetails.getDateOfBirth() != null ? updatedPlayerDetails.getDateOfBirth() : existingPlayer.getDateOfBirth());
-                existingPlayer.setGamesPlayed(updatedPlayerDetails.getGamesPlayed() != 0 ? updatedPlayerDetails.getGamesPlayed() : existingPlayer.getGamesPlayed());
-
-                return playerDetailRepository.save(existingPlayer);
-            } else {
-                log.error("Unable to retrieve player with ID [{}]", updatedPlayerDetails.getId());
-                throw new GenericException("Uh oh! Something went wrong.");
-            }
+            return playerDetailRepository.save(existingPlayer);
 
         } catch (Exception e) {
             log.error("Unable to update player with ID [{}]. Error: [{}]", updatedPlayerDetails.getId(), e.getMessage(), e);
@@ -116,39 +78,20 @@ public class PlayerDetailsServiceImpl implements PlayerDetailsService {
     }
 
     @Override
-    public void removePlayerByName(String name) throws GenericException {
-        log.info("About to remove player with name [{}]", name);
+    @Transactional
+    public List<Leaderboard> removePlayerById(String id) throws GenericException {
+        log.info("About to remove player with ID [{}]", id);
 
         try {
-            PlayerDetails playerDetails = getPlayerByName(name);
-            String playerId = playerDetails.getId();
-
-            rankingRepository.deleteByPlayerId(playerId);
+            rankingRepository.deleteByPlayerId(id);
             rankingService.recalculateLeaderboard(null, 0, null, 0);
 
-            playerDetailRepository.deleteById(playerId);
+            playerDetailRepository.deleteById(id);
+
+            return leaderboardService.getLeaderboard();
 
         } catch (Exception e) {
-            log.error("Unable to remove player with name [{}]. Error: [{}]", name, e.getMessage(), e);
-            throw new GenericException("Uh oh! Something went wrong.");
-        }
-    }
-
-    @Override
-    public void removePlayerByEmail(String email) throws GenericException {
-        log.info("About to remove player with email [{}]", email);
-
-        try {
-            PlayerDetails playerDetails = getPlayerByEmail(email);
-            String playerId = playerDetails.getId();
-
-            rankingRepository.deleteByPlayerId(playerId);
-            rankingService.recalculateLeaderboard(null, 0, null, 0);
-
-            playerDetailRepository.deleteById(playerId);
-
-        } catch (Exception e) {
-            log.error("Unable to remove player with email address [{}]. Error: [{}]", email, e.getMessage(), e);
+            log.error("Unable to remove player with ID [{}]. Error: [{}]", id, e.getMessage(), e);
             throw new GenericException("Uh oh! Something went wrong.");
         }
     }

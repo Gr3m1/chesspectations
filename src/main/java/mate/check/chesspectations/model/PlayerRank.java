@@ -10,4 +10,6 @@ import lombok.EqualsAndHashCode;
 public class PlayerRank extends PlayerDetails {
 
     private int ranking;
+
+
 }

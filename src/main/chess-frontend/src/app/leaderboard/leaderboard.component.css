@@ -34,6 +34,19 @@
   text-align: center;
 }
 
+.cell-data {
+  font-size: 20px;
+}
+
+.error-message {
+  color: #b30000;
+  text-align: center;
+}
+
+.button-spacing {
+  margin: 2px;
+}
+
 table {
   width: 100%;
 }
