@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import mate.check.chesspectations.exception.GenericException;
 import mate.check.chesspectations.model.Leaderboard;
 import mate.check.chesspectations.model.PlayerDetails;
+import mate.check.chesspectations.model.PlayerNameRank;
 import mate.check.chesspectations.model.PlayerRank;
 import mate.check.chesspectations.repository.PlayerDetailRepository;
 import mate.check.chesspectations.repository.RankingRepository;
@@ -27,6 +28,20 @@ public class PlayerDetailsServiceImpl implements PlayerDetailsService {
     private final RankingRepository rankingRepository;
     private final LeaderboardService leaderboardService;
     private final RankingService rankingService;
+
+    @Override
+    public List<PlayerNameRank> getAllPlayers() throws GenericException {
+        log.info("About to retrieve all players");
+
+        List<PlayerNameRank> players = playerDetailRepository.getAllPlayers();
+
+        if (!players.isEmpty()) {
+            return players;
+        } else {
+            log.error("Unable to retrieve all players");
+            throw new GenericException("Uh oh! Something went wrong.");
+        }
+    }
 
     @Override
     public PlayerRank getPlayerById(String id) throws GenericException {
@@ -59,7 +74,7 @@ public class PlayerDetailsServiceImpl implements PlayerDetailsService {
     }
 
     @Override
-    public PlayerDetails updatePlayer(PlayerDetails updatedPlayerDetails) throws GenericException {
+    public List<Leaderboard> updatePlayer(PlayerDetails updatedPlayerDetails) throws GenericException {
         log.info("About to update player with ID [{}]", updatedPlayerDetails.getId());
 
         try {
@@ -67,9 +82,9 @@ public class PlayerDetailsServiceImpl implements PlayerDetailsService {
             existingPlayer.setPlayerName(updatedPlayerDetails.getPlayerName() != null ? updatedPlayerDetails.getPlayerName() : existingPlayer.getPlayerName());
             existingPlayer.setEmailAddress(updatedPlayerDetails.getEmailAddress() != null ? updatedPlayerDetails.getEmailAddress() : existingPlayer.getEmailAddress());
             existingPlayer.setDateOfBirth(updatedPlayerDetails.getDateOfBirth() != null ? updatedPlayerDetails.getDateOfBirth() : existingPlayer.getDateOfBirth());
-            existingPlayer.setGamesPlayed(updatedPlayerDetails.getGamesPlayed() != 0 ? updatedPlayerDetails.getGamesPlayed() : existingPlayer.getGamesPlayed());
 
-            return playerDetailRepository.save(existingPlayer);
+            playerDetailRepository.updatePlayerDetails(existingPlayer.getId(), existingPlayer.getPlayerName(), existingPlayer.getEmailAddress(), existingPlayer.getDateOfBirth());
+            return leaderboardService.getLeaderboard();
 
         } catch (Exception e) {
             log.error("Unable to update player with ID [{}]. Error: [{}]", updatedPlayerDetails.getId(), e.getMessage(), e);

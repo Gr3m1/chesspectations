@@ -30,7 +30,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     @Override
     public List<Leaderboard> getLeaderboard() throws GenericException {
-        log.info("About the retrieve chess leaderboard");
+        log.info("About to retrieve chess leaderboard");
         List<Leaderboard> leaderboardList = leaderboardRepository.getLeaderboard();
 
         if (!leaderboardList.isEmpty()) {

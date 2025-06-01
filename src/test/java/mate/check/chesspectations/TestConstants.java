@@ -6,7 +6,6 @@ import mate.check.chesspectations.model.PlayerRank;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class TestConstants {
@@ -66,12 +65,21 @@ public abstract class TestConstants {
         PlayerRank playerRank = new PlayerRank();
 
         playerRank.setId("123abc");
-        playerRank.setPlayerName("James Jeffreys");
+        playerRank.setPlayerName("Jameson Jeffreys");
         playerRank.setEmailAddress("jjeffreys@example.com");
         playerRank.setDateOfBirth(LocalDate.of(1978, 5, 12));
         playerRank.setGamesPlayed(15);
         playerRank.setRanking(1);
 
         return playerRank;
+    }
+
+    public static List<Leaderboard> getEditedLeaderboard() {
+        List<Leaderboard> leaderboard = getLeaderboard();
+        PlayerRank updatedPlayer = getUpdatedPlayer();
+        int rankIndex = updatedPlayer.getRanking() - 1;
+
+        leaderboard.get(rankIndex).setPlayerName(updatedPlayer.getPlayerName());
+        return leaderboard;
     }
 }

@@ -7,7 +7,7 @@
     <h1 class="header-text">Chesspectations</h1>
   </div>
 
-  @if (!displayError) {
+  @if (!displayError && !isLoading) {
     <div class="leaderboard-container">
       <table mat-table [dataSource]="dataSource">
         <ng-container matColumnDef="ranking">
@@ -28,12 +28,6 @@
             <button mat-icon-button (click)="viewPlayer(leaderboard)">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button color="primary" (click)="editPlayer(leaderboard.playerId)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="removePlayer(leaderboard)">
-              <mat-icon>delete</mat-icon>
-            </button>
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table-headers"></tr>
@@ -41,8 +35,8 @@
       </table>
       <br>
       <div>
-        <button type="button" class="btn btn-dark button-spacing" (click)="openNewPlayerModal()">Add New Player</button>
-        <button type="button" class="btn btn-dark button-spacing" (click)="openMatchModal()">Add Match</button>
+        <button type="button" class="btn btn-dark button-spacing" (click)="addNewPlayer()">Add New Player</button>
+        <button type="button" class="btn btn-dark button-spacing" (click)="addMatch()">Add Match</button>
       </div>
     </div>
 

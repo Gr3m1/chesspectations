@@ -45,6 +45,7 @@
 
 .button-spacing {
   margin: 2px;
+  float: left;
 }
 
 table {

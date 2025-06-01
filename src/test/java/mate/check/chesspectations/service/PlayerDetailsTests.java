@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,20 +104,16 @@ public class PlayerDetailsTests {
     void testUpdatePlayerSuccess() throws GenericException {
         PlayerRank existingPlayer = TestConstants.getPlayerRank();
         PlayerRank updatedPlayer = TestConstants.getUpdatedPlayer();
+        List<Leaderboard> leaderboard = TestConstants.getEditedLeaderboard();
 
         when(playerDetailRepository.getPlayerById(anyString())).thenReturn(Optional.of(TestConstants.getPlayerRank()));
-        when(playerDetailRepository.save(any(PlayerRank.class))).thenReturn(updatedPlayer);
+        when(leaderboardService.getLeaderboard()).thenReturn(leaderboard);
 
-        PlayerDetails result = playerDetailsService.updatePlayer(updatedPlayer);
+        List<Leaderboard> result = playerDetailsService.updatePlayer(updatedPlayer);
 
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(updatedPlayer.getId(), result.getId());
-        Assertions.assertEquals(updatedPlayer.getPlayerName(), result.getPlayerName());
-        Assertions.assertEquals(existingPlayer.getPlayerName(), updatedPlayer.getPlayerName());
-        Assertions.assertEquals(updatedPlayer.getGamesPlayed(), result.getGamesPlayed());
-        Assertions.assertEquals(existingPlayer.getGamesPlayed(), updatedPlayer.getGamesPlayed());
-
-        Assertions.assertNotEquals(existingPlayer.getEmailAddress(), result.getEmailAddress());
+        Assertions.assertEquals(updatedPlayer.getId(), result.get(0).getPlayerId());
+        Assertions.assertNotEquals(existingPlayer.getPlayerName(), result.get(0).getPlayerName());
     }
 
     @Test
@@ -138,7 +135,7 @@ public class PlayerDetailsTests {
         PlayerRank updatedPlayer = TestConstants.getUpdatedPlayer();
 
         when(playerDetailRepository.getPlayerById(anyString())).thenReturn(Optional.of(updatedPlayer));
-        doThrow(new RuntimeException("Simulated DB failure")).when(playerDetailRepository).save(any(PlayerRank.class));
+        doThrow(new RuntimeException("Simulated DB failure")).when(playerDetailRepository).updatePlayerDetails(anyString(), anyString(), anyString(), any(LocalDate.class));
 
         GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
             playerDetailsService.updatePlayer(updatedPlayer);

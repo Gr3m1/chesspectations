@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>Player Detail</h2>
+
+<form [formGroup]="playerForm">
+  <div class="field">
+    <label>Rank</label>
+    <input type="text" formControlName="ranking" [readOnly]="true">
+  </div>
+
+  <div class="field">
+    <label>Name</label>
+    <input type="text" formControlName="playerName" [readOnly]="!isEditable">
+  </div>
+
+  <div class="field">
+    <label>Email</label>
+    <input type="text" formControlName="emailAddress" [readOnly]="!isEditable">
+  </div>
+
+  <div class="field">
+    <label>Date of Birth</label>
+    <input type="date" formControlName="dateOfBirth" [readOnly]="!isEditable">
+  </div>
+
+  <div class="field">
+    <label>Games Played</label>
+    <input type="text" formControlName="gamesPlayed" [readOnly]="true">
+  </div>
+</form>
+
+<div style="margin-left: 1.5rem">
+  <button *ngIf="!isEditable" type="button" class="btn btn-dark modal-button" (click)="editPlayer()">Update Player</button>
+  <button *ngIf="isEditable" type="button" class="btn btn-dark modal-button" (click)="savePlayer(playerForm.getRawValue())">Save Player</button>
+  <button type="button" class="btn btn-dark modal-button" (click)="removePlayer(playerForm.getRawValue())">Remove Player</button>
+  <button type="button" class="btn btn-dark modal-button" (click)="closeModal()">Close</button>
+</div>

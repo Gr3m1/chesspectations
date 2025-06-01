@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mate.check.chesspectations.model.Leaderboard;
 import mate.check.chesspectations.model.PlayerDetails;
+import mate.check.chesspectations.model.PlayerNameRank;
 import mate.check.chesspectations.model.PlayerRank;
 import mate.check.chesspectations.service.PlayerDetailsService;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,13 @@ public class PlayerDetailsController {
 
     private final PlayerDetailsService playerDetailsService;
 
+    @GetMapping
+    public ResponseEntity<List<PlayerNameRank>> getAllPlayers() throws Exception {
+        log.info("Starting call to get all players");
+        List<PlayerNameRank> players = playerDetailsService.getAllPlayers();
+        return ResponseEntity.ok(players);
+    }
+
     @GetMapping("/byId/{id}")
     public ResponseEntity<PlayerRank> getPlayerById(@PathVariable("id") String id) throws Exception {
         log.info("Starting call to get player details for ID [{}]", id);
@@ -37,13 +45,13 @@ public class PlayerDetailsController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<PlayerDetails> updatePlayerDetail(@RequestBody @Valid PlayerDetails playerDetails) throws Exception {
+    public ResponseEntity<List<Leaderboard>> updatePlayerDetail(@RequestBody @Valid PlayerDetails playerDetails) throws Exception {
         log.info("Starting call to update details for player with id [{}]", playerDetails.getId());
 
         if (playerDetails.getId() == null || playerDetails.getId().isEmpty()) {
             throw new IllegalArgumentException("Player ID is required");
         }
-        PlayerDetails updatedPlayer = playerDetailsService.updatePlayer(playerDetails);
+        List<Leaderboard> updatedPlayer = playerDetailsService.updatePlayer(playerDetails);
         return ResponseEntity.ok(updatedPlayer);
     }
 

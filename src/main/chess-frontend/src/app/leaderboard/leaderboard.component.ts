@@ -16,8 +16,10 @@ import {
 import {LeaderboardService} from './leaderboard.service';
 import {MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
-import {PlayerDetails} from '../model/PlayerDetails';
-import {ChessMatch} from '../model/ChessMatch';
+import {PlayerModalComponent} from '../player-modal/player-modal.component';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {PlayerRank} from '../model/PlayerRank';
+import {MatchModalComponent} from '../match-modal/match-modal.component';
 
 @Component({
   selector: 'app-leaderboard',
@@ -43,9 +45,10 @@ export class LeaderboardComponent implements OnInit {
   dataSource = new MatTableDataSource<Leaderboard>();
   errorMessage: string = '';
   displayError: boolean = false;
-  success = false;
+  isLoading = true;
 
-  constructor(private leaderboardService: LeaderboardService) {
+  constructor(private leaderboardService: LeaderboardService,
+              private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -54,99 +57,89 @@ export class LeaderboardComponent implements OnInit {
 
   getLeaderboard() {
     this.leaderboardService.getLeaderboard().subscribe({
-      next: (leaderboardArr) => this.dataSource.data = leaderboardArr,
-      error: (err) => {
-        this.setErrorMessage(err);
-        this.displayError = true;
-      }
-    })
-  }
-
-  openNewPlayerModal() {
-
-  }
-
-  openMatchModal() {
-
-  }
-
-  addNewPlayer(newPlayer: PlayerDetails) {
-    this.leaderboardService.addNewPlayer(newPlayer).subscribe({
-      next: leaderboardArr => {
-        this.dataSource.data = leaderboardArr
-        this.success = true;
-        // this.modal.close();
-        // if success, show large yes button for 3 seconds, then close modal and reload dashboard
-
-        console.log(leaderboardArr)
+      next: (leaderboardArr) => {
+        this.dataSource.data = leaderboardArr;
+        this.isLoading = false;
       },
       error: (err) => {
         this.setErrorMessage(err);
         this.displayError = true;
-        this.success = false;
       }
     })
   }
 
-  addMatch(chessMatch: ChessMatch) {
-    this.leaderboardService.addMatch(chessMatch).subscribe({
-      next: value => {
-        this.success = true;
-        // if success, show large yes button for 3 seconds, then close modal and reload dashboard
+  openPlayerModal(playerView: PlayerRank, isNewPlayer: boolean): MatDialogRef<PlayerModalComponent> {
+    return this.dialog.open(PlayerModalComponent, {
+      width: '80vw',
+      height: '40vh',
+      maxWidth: '100vw',
+      panelClass: 'custom-modal-class',
+      data: {
+        player: playerView,
+        shouldEdit: isNewPlayer,
+      }
+    });
+  }
+
+  viewPlayer(player: Leaderboard) {
+    this.leaderboardService.getPlayerById(player.playerId).subscribe({
+      next: playerView => {
+        const dialogRef = this.openPlayerModal(playerView, false);
+        dialogRef.afterClosed().subscribe((returnedData: Leaderboard[] | undefined) => {
+          if (returnedData && returnedData.length) {
+            this.dataSource.data = returnedData;
+          } else {
+            this.getLeaderboard();
+          }
+        })
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.setErrorMessage(err);
+        this.displayError = true;
+      }
+    });
+  }
+
+  addNewPlayer() {
+    const emptyPlayer: PlayerRank = {
+      id: '',
+      ranking: 0,
+      playerName: '',
+      emailAddress: '',
+      dateOfBirth: new Date(0),
+      gamesPlayed: 0
+    };
+    const dialogRef = this.openPlayerModal(emptyPlayer, true);
+    dialogRef.afterClosed().subscribe((returnedData: Leaderboard[] | undefined) => {
+      if (returnedData && returnedData.length) {
+        this.dataSource.data = returnedData;
+      } else {
         this.getLeaderboard();
-        console.log(value)
-      },
-      error: (err) => {
-        this.setErrorMessage(err);
-        this.displayError = true;
-        this.success = false;
       }
     })
+    this.isLoading = false;
   }
 
-  viewPlayer(id: string) {
-    this.leaderboardService.getPlayerById(id).subscribe({
-      next: value => {
-        this.success = true;
-        // if success, show large yes button for 3 seconds, open new modal showing player details
-        console.log(value)
-      },
-      error: (err) => {
-        this.setErrorMessage(err);
-        this.displayError = true;
-        this.success = false;
-      }
-    })
+  openMatchModal(): MatDialogRef<MatchModalComponent> {
+      return this.dialog.open(MatchModalComponent, {
+        width: '80vw',
+        height: '40vh',
+        maxWidth: '100vw',
+        panelClass: 'custom-modal-class',
+      });
   }
 
-  editPlayer(updatedPlayer: PlayerDetails) {
-    this.leaderboardService.updatedPlayer(updatedPlayer).subscribe({
-      next: player => {
-        this.success = true;
-        // populate player modal with new values
-        console.log(player)
-      },
-      error: (err) => {
-        this.setErrorMessage(err);
-        this.displayError = true;
-        this.success = false;
+  addMatch() {
+    const dialogRef = this.openMatchModal();
+    dialogRef.afterClosed().subscribe((returnedData: Leaderboard[] | undefined) => {
+      if (returnedData && returnedData.length) {
+        this.dataSource.data = returnedData;
+      } else {
+        this.getLeaderboard();
       }
     })
-  }
-
-  removePlayer(id: string) {
-    this.leaderboardService.removePlayer(id).subscribe({
-      next: value => {
-        this.success = true;
-        // if success, show large yes button for 3 seconds, open new modal showing player details
-        console.log(value)
-      },
-      error: (err) => {
-        this.setErrorMessage(err);
-        this.displayError = true;
-        this.success = false;
-      }
-    })
+    this.isLoading = false;
   }
 
   // @ts-ignore

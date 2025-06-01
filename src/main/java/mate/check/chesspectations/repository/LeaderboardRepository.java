@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface LeaderboardRepository extends CrudRepository<PlayerRank, String> {
 
     @Query("""
-            SELECT r.ranking, p.id, p.player_name, p.games_played
+            SELECT r.ranking, p.id AS player_id, p.player_name, p.games_played
             FROM chessdata.ranking r
             INNER JOIN chessdata.player_details p ON r.player_id = p.id
             ORDER BY r.ranking
