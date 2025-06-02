@@ -30,17 +30,18 @@
 
   <mat-form-field>
     <mat-label>Date of Match</mat-label>
-    <input matInput [matDatepicker]="picker"formControlName="datePlayed" required>
+    <input matInput [matDatepicker]="picker" formControlName="datePlayed" required>
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
-</form>
 
-<div style="margin-left: 1.5rem">
-  <button type="button"
-          class="btn btn-dark modal-button"
-          (click)="saveMatch()"
-          [disabled]="isSaveButtonDisabled()"
-  >Save Match</button>
-  <button type="button" class="btn btn-dark modal-button" (click)="closeModal()">Close</button>
-</div>
+  <div style="margin-left: 1.5rem">
+    <button type="button"
+            class="btn btn-dark modal-button"
+            (click)="saveMatch()"
+            [disabled]="isSaveButtonDisabled()"
+    >Save Match
+    </button>
+    <button type="button" class="btn btn-dark modal-button" (click)="closeModal()">Close</button>
+  </div>
+</form>

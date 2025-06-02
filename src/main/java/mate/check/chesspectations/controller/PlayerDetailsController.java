@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/v1/players")
 @Slf4j
@@ -23,6 +22,7 @@ public class PlayerDetailsController {
 
     private final PlayerDetailsService playerDetailsService;
 
+    // only frontend user can call this
     @GetMapping
     public ResponseEntity<List<PlayerNameRank>> getAllPlayers() throws Exception {
         log.info("Starting call to get all players");
@@ -30,6 +30,7 @@ public class PlayerDetailsController {
         return ResponseEntity.ok(players);
     }
 
+    // only admin can call this
     @GetMapping("/byId/{id}")
     public ResponseEntity<PlayerRank> getPlayerById(@PathVariable("id") String id) throws Exception {
         log.info("Starting call to get player details for ID [{}]", id);
@@ -37,6 +38,7 @@ public class PlayerDetailsController {
         return ResponseEntity.ok(playerDetail);
     }
 
+    // only admin can call this
     @PostMapping("/newPlayer")
     public ResponseEntity<List<Leaderboard>> addNewPlayer(@RequestBody @Valid PlayerDetails playerDetails) throws Exception {
         log.info("Starting call to add a new player with name [{}]", playerDetails.getPlayerName());
@@ -44,6 +46,7 @@ public class PlayerDetailsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newPlayerAddedList);
     }
 
+    // only admin can call this
     @PutMapping("/update")
     public ResponseEntity<List<Leaderboard>> updatePlayerDetail(@RequestBody @Valid PlayerDetails playerDetails) throws Exception {
         log.info("Starting call to update details for player with id [{}]", playerDetails.getId());
@@ -55,6 +58,7 @@ public class PlayerDetailsController {
         return ResponseEntity.ok(updatedPlayer);
     }
 
+    // only admin can call this
     @DeleteMapping("/removePlayer/{id}")
     public ResponseEntity<List<Leaderboard>> removePlayerById(@PathVariable("id") String id) throws Exception {
         log.info("Starting call to remove player with id [{}]", id);

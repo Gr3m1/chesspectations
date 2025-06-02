@@ -70,7 +70,7 @@ export class LeaderboardComponent implements OnInit {
 
   openPlayerModal(playerView: PlayerRank, isNewPlayer: boolean): MatDialogRef<PlayerModalComponent> {
     return this.dialog.open(PlayerModalComponent, {
-      width: '80vw',
+      width: '40vw',
       height: '50vh',
       maxWidth: '100vw',
       panelClass: 'custom-modal-class',
@@ -123,7 +123,7 @@ export class LeaderboardComponent implements OnInit {
 
   openMatchModal(): MatDialogRef<MatchModalComponent> {
       return this.dialog.open(MatchModalComponent, {
-        width: '80vw',
+        width: '40vw',
         height: '40vh',
         maxWidth: '100vw',
         panelClass: 'custom-modal-class',

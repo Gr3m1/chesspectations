@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/v1/leaderboard")
 @Slf4j
@@ -21,6 +20,7 @@ public class LeaderboardController {
 
     private final LeaderboardService leaderboardService;
 
+    // no auth, everybody can see
     @GetMapping
     public ResponseEntity<List<Leaderboard>> getLeaderboard() throws Exception {
         log.info("Starting call to get all player details");
@@ -28,6 +28,7 @@ public class LeaderboardController {
         return ResponseEntity.ok(leaderboard);
     }
 
+    // only admin can add matches
     @PostMapping("/matches")
     public ResponseEntity<List<Leaderboard>> addChessMatch(@RequestBody @Valid ChessMatch chessMatch) throws Exception {
         log.info("Starting call to add new chess match");
