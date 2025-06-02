@@ -3,6 +3,6 @@ export interface ChessMatch {
   ebonyRank: number;
   ivoryPlayerId: string;
   ivoryRank: number;
-  datePlayed: Date;
+  datePlayed: string;
   winner: string;
 }

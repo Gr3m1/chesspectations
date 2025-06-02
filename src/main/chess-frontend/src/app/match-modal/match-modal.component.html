@@ -1,37 +1,46 @@
 <h2 mat-dialog-title>New Chess Match</h2>
 
-<form [formGroup]="chessMatchForm">
-  <div class="field">
-    <label>Ebony Player</label>
-    <select formControlName="ebonyPlayerId">
-      <option *ngFor="let player of players" value="">{{player.playerName}}</option>
-    </select>
-  </div>
+<form [formGroup]="chessMatchForm" (ngSubmit)="saveMatch()">
+  <mat-form-field appearance="fill">
+    <mat-label>Ebony Player</mat-label>
+    <mat-select formControlName="ebonyPlayerId" (selectionChange)="onEbonyPlayerChange($event)">
+      <mat-option *ngFor="let player of players" [value]="player.playerId">
+        {{ player.playerName }} (Rank {{ player.ranking }})
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
-  <div class="field">
-    <label>Ivory Player</label>
-    <select formControlName="ivoryPlayerId">
-      <option *ngFor="let player of players" value="">{{player.playerName}}</option>
-    </select>
-  </div>
+  <mat-form-field appearance="fill">
+    <mat-label>Ivory Player</mat-label>
+    <mat-select formControlName="ivoryPlayerId" (selectionChange)="onIvoryPlayerChange($event)">
+      <mat-option *ngFor="let player of players" [value]="player.playerId">
+        {{ player.playerName }} (Rank {{ player.ranking }})
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
-  <div class="field">
-    <label>Winner</label>
-    <select formControlName="winner">
-      <option value="">-- Select Winner --</option>
-      <option value="EBONY">EBONY</option>
-      <option value="IVORY">IVORY</option>
-      <option value="TIE">TIE</option>
-    </select>
-  </div>
+  <mat-form-field appearance="fill">
+    <mat-label>Winner</mat-label>
+    <mat-select formControlName="winner">
+      <mat-option value="EBONY">EBONY</mat-option>
+      <mat-option value="IVORY">IVORY</mat-option>
+      <mat-option value="TIE">TIE</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-  <div class="field">
-    <label>Game Date</label>
-    <input type="date" formControlName="datePlayed">
-  </div>
+  <mat-form-field>
+    <mat-label>Date of Match</mat-label>
+    <input matInput [matDatepicker]="picker"formControlName="datePlayed" required>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
 </form>
 
 <div style="margin-left: 1.5rem">
-  <button type="button" class="btn btn-dark modal-button" (click)="saveMatch(chessMatchForm.getRawValue())">Save Match</button>
+  <button type="button"
+          class="btn btn-dark modal-button"
+          (click)="saveMatch()"
+          [disabled]="isSaveButtonDisabled()"
+  >Save Match</button>
   <button type="button" class="btn btn-dark modal-button" (click)="closeModal()">Close</button>
 </div>

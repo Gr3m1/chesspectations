@@ -71,7 +71,7 @@ export class LeaderboardComponent implements OnInit {
   openPlayerModal(playerView: PlayerRank, isNewPlayer: boolean): MatDialogRef<PlayerModalComponent> {
     return this.dialog.open(PlayerModalComponent, {
       width: '80vw',
-      height: '40vh',
+      height: '50vh',
       maxWidth: '100vw',
       panelClass: 'custom-modal-class',
       data: {

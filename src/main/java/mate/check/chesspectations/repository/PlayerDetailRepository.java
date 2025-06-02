@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface PlayerDetailRepository extends CrudRepository<PlayerDetails, String> {
 
     @Query("""
-            SELECT p.id, p.player_name, r.ranking
+            SELECT p.id AS player_id, p.player_name, r.ranking
             FROM chessdata.player_details p 
             INNER JOIN chessdata.ranking r on p.id = r.player_id
             ORDER BY r.ranking ASC
@@ -31,6 +31,14 @@ public interface PlayerDetailRepository extends CrudRepository<PlayerDetails, St
             WHERE p.id = :id
             """)
     Optional<PlayerRank> getPlayerById(String id);
+
+    @Modifying
+    @Query("""
+            UPDATE chessdata.player_details
+            SET games_played = :gamesPlayed
+            WHERE id = :id
+            """)
+    void updateGamesPlayed(String id, int gamesPlayed);
 
     @Modifying
     @Transactional

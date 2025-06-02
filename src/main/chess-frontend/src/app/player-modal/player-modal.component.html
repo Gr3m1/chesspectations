@@ -1,31 +1,36 @@
 <h2 mat-dialog-title>Player Detail</h2>
 
 <form [formGroup]="playerForm">
-  <div class="field">
-    <label>Rank</label>
-    <input type="text" formControlName="ranking" [readOnly]="true">
-  </div>
+  <mat-form-field>
+    <mat-label>Rank</mat-label>
+    <input matInput formControlName="ranking" [readOnly]="true">
+  </mat-form-field>
 
-  <div class="field">
-    <label>Name</label>
-    <input type="text" formControlName="playerName" [readOnly]="!isEditable">
-  </div>
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="playerName" [readOnly]="!isEditable">
+  </mat-form-field>
 
-  <div class="field">
-    <label>Email</label>
-    <input type="text" formControlName="emailAddress" [readOnly]="!isEditable">
-  </div>
+  <mat-form-field>
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="emailAddress" [readOnly]="!isEditable">
+  </mat-form-field>
 
-  <div class="field">
-    <label>Date of Birth</label>
-    <input type="date" formControlName="dateOfBirth" [readOnly]="!isEditable">
-  </div>
+  <mat-form-field appearance="fill">
+    <mat-label>Date of Birth</mat-label>
+    <input
+      matInput
+      [matDatepicker]="dobPicker"
+      formControlName="dateOfBirth"
+      [readonly]="!isEditable">
+    <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+    <mat-datepicker #dobPicker></mat-datepicker>
+  </mat-form-field>
 
-  <div class="field">
-    <label>Games Played</label>
-    <input type="text" formControlName="gamesPlayed" [readOnly]="true">
-  </div>
-</form>
+  <mat-form-field>
+    <mat-label>Games Played</mat-label>
+    <input matInput formControlName="gamesPlayed" [readOnly]="true">
+  </mat-form-field>
 
 <div style="margin-left: 1.5rem">
   <button *ngIf="!isEditable" type="button" class="btn btn-dark modal-button" (click)="editPlayer()">Update Player</button>

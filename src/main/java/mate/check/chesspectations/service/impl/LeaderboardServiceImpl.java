@@ -13,6 +13,7 @@ import mate.check.chesspectations.service.RankingService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,6 +22,8 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class LeaderboardServiceImpl implements LeaderboardService {
+
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private final LeaderboardRepository leaderboardRepository;
     private final ChessMatchRepository chessMatchRepository;
@@ -56,7 +59,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             if (ebonyPlayerDetail.isPresent()) {
                 ebonyPlayer = ebonyPlayerDetail.get();
                 ebonyPlayer.setGamesPlayed(ebonyPlayer.getGamesPlayed() + 1);
-                playerDetailRepository.save(ebonyPlayer);
+                playerDetailRepository.updateGamesPlayed(ebonyPlayer.getId(), ebonyPlayer.getGamesPlayed());
             } else {
                 log.error("Unable to find ebony player with ID [{}]", chessMatch.getEbonyPlayerId());
                 throw new GenericException("Uh oh! Something went wrong.");
@@ -65,7 +68,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             if (ivoryPlayerDetail.isPresent()) {
                 ivoryPlayer = ivoryPlayerDetail.get();
                 ivoryPlayer.setGamesPlayed(ivoryPlayer.getGamesPlayed() + 1);
-                playerDetailRepository.save(ivoryPlayer);
+                playerDetailRepository.updateGamesPlayed(ivoryPlayer.getId(), ivoryPlayer.getGamesPlayed());
             } else {
                 log.error("Unable to find ivory player with ID [{}]", chessMatch.getIvoryPlayerId());
                 throw new GenericException("Uh oh! Something went wrong.");

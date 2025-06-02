@@ -5,13 +5,19 @@ import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {LeaderboardService} from '../leaderboard/leaderboard.service';
 import {Leaderboard} from '../model/Leaderboard';
 import {NgIf} from '@angular/common';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-player-modal',
   imports: [
     ReactiveFormsModule,
     MatDialogTitle,
-    NgIf
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
   ],
   templateUrl: './player-modal.component.html',
   styleUrl: './player-modal.component.css'

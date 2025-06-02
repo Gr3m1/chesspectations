@@ -1,25 +1,27 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialogRef, MatDialogTitle} from "@angular/material/dialog";
-import {FormBuilder, FormGroup, ReactiveFormsModule} from "@angular/forms";
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {LeaderboardService} from '../leaderboard/leaderboard.service';
-import {ChessMatch} from '../model/ChessMatch';
-import {Leaderboard} from '../model/Leaderboard';
-import {MatFormField, MatLabel} from '@angular/material/input';
-import {MatSelect} from '@angular/material/select';
-import {MatOption} from '@angular/material/core';
 import {PlayerNameRank} from '../model/PlayerNameRank';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSelectChange, MatSelectModule} from '@angular/material/select';
+import {MatOption} from '@angular/material/core';
 import {NgForOf} from '@angular/common';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatInputModule} from '@angular/material/input';
+import {Leaderboard} from '../model/Leaderboard';
 
 @Component({
   selector: 'app-match-modal',
   imports: [
     ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatSelect,
+    MatFormFieldModule,
+    MatSelectModule,
     MatOption,
     NgForOf,
-    MatDialogTitle
+    MatDialogTitle,
+    MatDatepickerModule,
+    MatInputModule,
   ],
   templateUrl: './match-modal.component.html',
   styleUrl: './match-modal.component.css'
@@ -32,7 +34,7 @@ export class MatchModalComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<MatchModalComponent>,
-    private builder: FormBuilder,
+    private formBuilder: FormBuilder,
     private leaderboardService: LeaderboardService,
   ) {
   }
@@ -42,31 +44,73 @@ export class MatchModalComponent implements OnInit {
       this.players = playerList;
     });
 
-    this.chessMatchForm = this.builder.group({
-      ebonyPlayerId: [],
-      ebonyRank: [],
-      ivoryPlayerId: [],
-      ivoryRank: [],
-      datePlayed: [],
-      winner: [],
+    this.chessMatchForm = this.formBuilder.group({
+      ebonyPlayerId: [null, Validators.required],
+      ebonyRank: [null],
+      ivoryPlayerId: [null, Validators.required],
+      ivoryRank: [null],
+      datePlayed: [null, Validators.required],
+      winner: [null, Validators.required],
     });
   }
 
-  saveMatch(match: ChessMatch) {
-    console.log(match);
-    // set values before passing in -> id and rank are blank
-    // validate both IDs are different
-    // !!! HANDLE ERRORS !!!
+  onEbonyPlayerChange(event: MatSelectChange): void {
+    const playerId = event.value;
+    const selectedPlayer = this.players.find(p => p.playerId === playerId);
 
-    this.leaderboardService.addMatch(match).subscribe({
-      next: (leaderboardList: Leaderboard[]) => {
-        this.dialogRef.close(leaderboardList);
-      },
-      error: (err) => {
-        this.setErrorMessage(err);
-        this.displayError = true;
-      }
-    });
+    if (selectedPlayer) {
+      this.chessMatchForm.patchValue({
+        ebonyRank: selectedPlayer.ranking
+      });
+    }
+  }
+
+  onIvoryPlayerChange(event: MatSelectChange): void {
+    const playerId = event.value;
+    const selectedPlayer = this.players.find(p => p.playerId === playerId);
+
+    if (selectedPlayer) {
+      this.chessMatchForm.patchValue({
+        ivoryRank: selectedPlayer.ranking
+      });
+    }
+  }
+
+  saveMatch() {
+    if (this.chessMatchForm.valid) {
+      const rawDate: Date = this.chessMatchForm.value.datePlayed;
+      const formattedDate: string = rawDate.toISOString().split('T')[0]
+
+      const request = {
+        ebonyPlayerId: this.chessMatchForm.value.ebonyPlayerId,
+        ebonyRank: this.chessMatchForm.value.ebonyRank,
+        ivoryPlayerId: this.chessMatchForm.value.ivoryPlayerId,
+        ivoryRank: this.chessMatchForm.value.ivoryRank,
+        datePlayed: formattedDate,
+        winner: this.chessMatchForm.value.winner,
+      };
+
+      this.leaderboardService.addMatch(request).subscribe({
+        next: (leaderboardList: Leaderboard[]) => {
+          this.dialogRef.close(leaderboardList);
+        },
+        error: (err) => {
+          this.setErrorMessage(err);
+          this.displayError = true;
+        }
+      });
+    } else {
+      console.warn("Invalid form: ", this.chessMatchForm.value);
+      this.chessMatchForm.markAllAsTouched();
+    }
+  }
+
+  isSaveButtonDisabled(): boolean {
+    const form = this.chessMatchForm;
+    const ebonyId = form.get('ebonyPlayerId')?.value;
+    const ivoryId = form.get('ivoryPlayerId')?.value;
+
+    return form.invalid || (ebonyId && ivoryId && ebonyId === ivoryId);
   }
 
   closeModal() {
@@ -76,5 +120,9 @@ export class MatchModalComponent implements OnInit {
   // @ts-ignore
   setErrorMessage(err) {
     return this.errorMessage = err.error?.message || 'An unexpected error has occurred. Please try again later.';
+  }
+
+  log(event: any) {
+    console.log('Ebony selected:', this.chessMatchForm.value.ebonyPlayerId);
   }
 }
