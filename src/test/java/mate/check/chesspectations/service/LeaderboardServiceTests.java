@@ -1,15 +1,15 @@
 package mate.check.chesspectations.service;
 
 import mate.check.chesspectations.TestConstants;
+import mate.check.chesspectations.enumeration.Winner;
 import mate.check.chesspectations.exception.GenericException;
+import mate.check.chesspectations.model.ChessMatch;
 import mate.check.chesspectations.model.Leaderboard;
-import mate.check.chesspectations.model.PlayerDetails;
 import mate.check.chesspectations.repository.ChessMatchRepository;
 import mate.check.chesspectations.repository.LeaderboardRepository;
 import mate.check.chesspectations.repository.PlayerDetailRepository;
 import mate.check.chesspectations.repository.RankingRepository;
 import mate.check.chesspectations.service.impl.LeaderboardServiceImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,10 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class LeaderboardServiceTests {
@@ -53,9 +54,9 @@ public class LeaderboardServiceTests {
 
         List<Leaderboard> resultList = leaderboardService.getLeaderboard();
 
-        Assertions.assertNotNull(resultList);
-        Assertions.assertEquals(mockLeaderboard.size(), resultList.size());
-        Assertions.assertEquals(mockLeaderboard, resultList);
+        assertNotNull(resultList);
+        assertEquals(mockLeaderboard.size(), resultList.size());
+        assertEquals(mockLeaderboard, resultList);
     }
 
     @Test
@@ -63,35 +64,91 @@ public class LeaderboardServiceTests {
         List<Leaderboard> emptyLeaderboard = new ArrayList<>();
         when(leaderboardRepository.getLeaderboard()).thenReturn(emptyLeaderboard);
 
-        GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
+        GenericException exception = assertThrows(GenericException.class, () -> {
             leaderboardService.getLeaderboard();
         });
 
-        Assertions.assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+        assertEquals("Uh oh! Something went wrong.", exception.getMessage());
     }
 
     // add match
-//    @Test
-//    void testAddMatchSuccess() {
-//        // test save successful
-//        // test ranking update successful
-//    }
-//
-//    @Test
-//    void testAddMatchFailure() {
-//        // test save failure
-//        // test ranking update failure...
-//    }
+    @Test
+    void testAddMatchSuccess() throws GenericException {
+        ChessMatch chessMatch = TestConstants.getChessMatch();
 
-    // update rankings high winner - no ranking change
+        when(playerDetailRepository.getPlayerById(anyString()))
+                .thenReturn(Optional.of(TestConstants.getPlayerRank1()))
+                .thenReturn(Optional.of(TestConstants.getPlayerRank2()));
+        when(leaderboardRepository.getLeaderboard()).thenReturn(TestConstants.getLeaderboardAfterMatch());
 
-    // update rankings draw - lower move up
+        leaderboardService.addChessMatch(chessMatch);
 
-    // update rankings draw - no move
+        verify(playerDetailRepository).updateGamesPlayed("123abc", 16);
+        verify(playerDetailRepository).updateGamesPlayed("789ghi", 6);
+        verify(chessMatchRepository).saveNewMatch(anyString(), eq("123abc"), anyInt(), eq("789ghi"), anyInt(), any(LocalDate.class), eq(Winner.IVORY));
+        verify(rankingService).updateRankings(any(ChessMatch.class));
+    }
 
-    // update rankings low winner
+    @Test
+    void testAddMatchFailToGetPlayer() {
+        ChessMatch chessMatch = TestConstants.getChessMatch();
 
-    // update rankings low winner adjacent
+        when(playerDetailRepository.getPlayerById(anyString()))
+                .thenReturn(Optional.of(TestConstants.getPlayerRank1()))
+                .thenReturn(Optional.empty());
+
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            leaderboardService.addChessMatch(chessMatch);
+        });
+
+        assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+        verify(playerDetailRepository, atMostOnce()).updateGamesPlayed(anyString(), anyInt());
+        verifyNoInteractions(chessMatchRepository);
+        verifyNoInteractions(rankingService);
+        verifyNoInteractions(leaderboardRepository);
+    }
+
+    @Test
+    void testAddMatchFailToSaveMatch() {
+        ChessMatch chessMatch = TestConstants.getChessMatch();
+
+        when(playerDetailRepository.getPlayerById(anyString()))
+                .thenReturn(Optional.of(TestConstants.getPlayerRank1()))
+                .thenReturn(Optional.of(TestConstants.getPlayerRank2()));
+
+        doThrow(new RuntimeException("Simulated DB failure"))
+                .when(chessMatchRepository).saveNewMatch(anyString(), anyString(), anyInt(), anyString(), anyInt(), any(LocalDate.class), any(Winner.class));
+
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            leaderboardService.addChessMatch(chessMatch);
+        });
+
+        assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+        verify(playerDetailRepository).updateGamesPlayed("123abc", 16);
+        verify(playerDetailRepository).updateGamesPlayed("789ghi", 6);
+        verifyNoInteractions(rankingService);
+        verifyNoInteractions(leaderboardRepository);
+    }
+
+    @Test
+    void testAddMatchFailToRetrieveLeaderboard() {
+        ChessMatch chessMatch = TestConstants.getChessMatch();
+
+        when(playerDetailRepository.getPlayerById(anyString()))
+                .thenReturn(Optional.of(TestConstants.getPlayerRank1()))
+                .thenReturn(Optional.of(TestConstants.getPlayerRank2()));
+        when(leaderboardRepository.getLeaderboard()).thenThrow(new RuntimeException("Simulated DB failure"));
+
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            leaderboardService.addChessMatch(chessMatch);
+        });
+
+        assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+        verify(playerDetailRepository).updateGamesPlayed("123abc", 16);
+        verify(playerDetailRepository).updateGamesPlayed("789ghi", 6);
+        verify(chessMatchRepository).saveNewMatch(anyString(), eq("123abc"), anyInt(), eq("789ghi"), anyInt(), any(LocalDate.class), eq(Winner.IVORY));
+        verify(rankingService).updateRankings(any(ChessMatch.class));
+    }
 
     // add new player
     @Test
@@ -105,10 +162,10 @@ public class LeaderboardServiceTests {
 
         List<Leaderboard> resultList = leaderboardService.addNewPlayer(id);
 
-        Assertions.assertNotNull(resultList);
-        Assertions.assertEquals(initialMockLeaderboard.size() + 1, resultList.size());
-        Assertions.assertEquals(expectedLeaderboard.size(), resultList.size());
-        Assertions.assertEquals(expectedLeaderboard, resultList);
+        assertNotNull(resultList);
+        assertEquals(initialMockLeaderboard.size() + 1, resultList.size());
+        assertEquals(expectedLeaderboard.size(), resultList.size());
+        assertEquals(expectedLeaderboard, resultList);
     }
 
     @Test
@@ -118,10 +175,10 @@ public class LeaderboardServiceTests {
         when(rankingRepository.getMaxRank()).thenReturn(3);
         doThrow(new RuntimeException("Simulated DB failure")).when(rankingRepository).saveNewRanking(anyString(), anyString(), anyInt());
 
-        GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
+        GenericException exception = assertThrows(GenericException.class, () -> {
             leaderboardService.addNewPlayer(id);
         });
 
-        Assertions.assertTrue(exception.getMessage().contains("Unable to add new player with ID [{" + id + "}]"));
+        assertTrue(exception.getMessage().contains("Unable to add new player with ID [{" + id + "}]"));
     }
 }

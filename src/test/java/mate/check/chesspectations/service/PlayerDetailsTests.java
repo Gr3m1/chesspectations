@@ -4,11 +4,11 @@ import mate.check.chesspectations.TestConstants;
 import mate.check.chesspectations.exception.GenericException;
 import mate.check.chesspectations.model.Leaderboard;
 import mate.check.chesspectations.model.PlayerDetails;
+import mate.check.chesspectations.model.PlayerNameRank;
 import mate.check.chesspectations.model.PlayerRank;
 import mate.check.chesspectations.repository.PlayerDetailRepository;
 import mate.check.chesspectations.repository.RankingRepository;
 import mate.check.chesspectations.service.impl.PlayerDetailsServiceImpl;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,10 +16,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -42,6 +43,30 @@ public class PlayerDetailsTests {
     @InjectMocks
     private PlayerDetailsServiceImpl playerDetailsService;
 
+    // get all player
+    @Test
+    void testGetAllPlayersSuccess() throws GenericException {
+        List<PlayerNameRank> players = TestConstants.getAllPlayers();
+        when(playerDetailRepository.getAllPlayers()).thenReturn(players);
+
+        List<PlayerNameRank> result = playerDetailsService.getAllPlayers();
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(result.size(), players.size());
+    }
+
+    @Test
+    void testGetAllPlayersFailure() {
+        List<PlayerNameRank> players = new ArrayList<>();
+
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            playerDetailsService.getAllPlayers();
+        });
+
+        assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+    }
+
     // get player by id
     @Test
     void testGetPlayerByIdSuccess() throws GenericException {
@@ -51,10 +76,10 @@ public class PlayerDetailsTests {
 
         PlayerRank result = playerDetailsService.getPlayerById(id);
 
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(playerRank.getPlayerName(), result.getPlayerName());
-        Assertions.assertEquals(playerRank.getGamesPlayed(), result.getGamesPlayed());
-        Assertions.assertEquals(playerRank, result);
+        assertNotNull(result);
+        assertEquals(playerRank.getPlayerName(), result.getPlayerName());
+        assertEquals(playerRank.getGamesPlayed(), result.getGamesPlayed());
+        assertEquals(playerRank, result);
     }
 
     @Test
@@ -62,11 +87,11 @@ public class PlayerDetailsTests {
         String id = "123";
         when(playerDetailRepository.getPlayerById(anyString())).thenReturn(Optional.empty());
 
-        GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
+        GenericException exception = assertThrows(GenericException.class, () -> {
             playerDetailsService.getPlayerById(id);
         });
 
-        Assertions.assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+        assertEquals("Uh oh! Something went wrong.", exception.getMessage());
     }
 
     // add new player
@@ -79,9 +104,9 @@ public class PlayerDetailsTests {
 
         List<Leaderboard> result = playerDetailsService.addNewPlayer(newPlayer);
 
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(newPlayer.getPlayerName(), result.get(result.size() - 1).getPlayerName());
-        Assertions.assertEquals(0, result.get(result.size() - 1).getGamesPlayed());
+        assertNotNull(result);
+        assertEquals(newPlayer.getPlayerName(), result.get(result.size() - 1).getPlayerName());
+        assertEquals(0, result.get(result.size() - 1).getGamesPlayed());
     }
 
     @Test
@@ -91,12 +116,12 @@ public class PlayerDetailsTests {
         doThrow(new RuntimeException("Simulated DB failure"))
                 .when(playerDetailRepository).saveNewPlayer(anyString(), eq(newPlayer.getPlayerName()), eq(newPlayer.getEmailAddress()), eq(newPlayer.getDateOfBirth()), eq(0));
 
-        GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
+        GenericException exception = assertThrows(GenericException.class, () -> {
             playerDetailsService.addNewPlayer(newPlayer);
         });
 
         verifyNoInteractions(leaderboardService);
-        Assertions.assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+        assertEquals("Uh oh! Something went wrong.", exception.getMessage());
     }
 
     // update player details
@@ -111,9 +136,9 @@ public class PlayerDetailsTests {
 
         List<Leaderboard> result = playerDetailsService.updatePlayer(updatedPlayer);
 
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(updatedPlayer.getId(), result.get(0).getPlayerId());
-        Assertions.assertNotEquals(existingPlayer.getPlayerName(), result.get(0).getPlayerName());
+        assertNotNull(result);
+        assertEquals(updatedPlayer.getId(), result.get(0).getPlayerId());
+        assertNotEquals(existingPlayer.getPlayerName(), result.get(0).getPlayerName());
     }
 
     @Test
@@ -122,12 +147,12 @@ public class PlayerDetailsTests {
 
         when(playerDetailRepository.getPlayerById(anyString())).thenThrow(new RuntimeException("Simulated DB failure"));
 
-        GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
+        GenericException exception = assertThrows(GenericException.class, () -> {
             playerDetailsService.updatePlayer(updatedPlayer);
         });
 
         verify(playerDetailRepository, never()).save(any(PlayerRank.class));
-        Assertions.assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+        assertEquals("Uh oh! Something went wrong.", exception.getMessage());
     }
 
     @Test
@@ -137,11 +162,11 @@ public class PlayerDetailsTests {
         when(playerDetailRepository.getPlayerById(anyString())).thenReturn(Optional.of(updatedPlayer));
         doThrow(new RuntimeException("Simulated DB failure")).when(playerDetailRepository).updatePlayerDetails(anyString(), anyString(), anyString(), any(LocalDate.class));
 
-        GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
+        GenericException exception = assertThrows(GenericException.class, () -> {
             playerDetailsService.updatePlayer(updatedPlayer);
         });
 
-        Assertions.assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+        assertEquals("Uh oh! Something went wrong.", exception.getMessage());
     }
 
     // remove player
@@ -157,7 +182,7 @@ public class PlayerDetailsTests {
         boolean containsId = result.stream()
                 .noneMatch(item -> "456def".equals(item.getPlayerId()));
 
-        Assertions.assertTrue(containsId);
+        assertTrue(containsId);
     }
 
     @Test
@@ -166,13 +191,13 @@ public class PlayerDetailsTests {
 
         doThrow(new RuntimeException("Simulated DB failure")).when(rankingRepository).deleteByPlayerId(id);
 
-        GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
+        GenericException exception = assertThrows(GenericException.class, () -> {
             playerDetailsService.removePlayerById(id);
         });
 
         verifyNoInteractions(playerDetailRepository);
         verifyNoInteractions(leaderboardService);
-        Assertions.assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+        assertEquals("Uh oh! Something went wrong.", exception.getMessage());
     }
 
     @Test
@@ -181,12 +206,12 @@ public class PlayerDetailsTests {
 
         doThrow(new RuntimeException("Simulated DB failure")).when(playerDetailRepository).deleteById(id);
 
-        GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
+        GenericException exception = assertThrows(GenericException.class, () -> {
             playerDetailsService.removePlayerById(id);
         });
 
         verifyNoInteractions(leaderboardService);
-        Assertions.assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+        assertEquals("Uh oh! Something went wrong.", exception.getMessage());
     }
 
     @Test
@@ -195,10 +220,10 @@ public class PlayerDetailsTests {
 
         when(leaderboardService.getLeaderboard()).thenThrow(new GenericException("Simulated get failure"));
 
-        GenericException exception = Assertions.assertThrows(GenericException.class, () -> {
+        GenericException exception = assertThrows(GenericException.class, () -> {
             playerDetailsService.removePlayerById(id);
         });
 
-        Assertions.assertEquals("Uh oh! Something went wrong.", exception.getMessage());
+        assertEquals("Uh oh! Something went wrong.", exception.getMessage());
     }
 }

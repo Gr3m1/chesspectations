@@ -6,5 +6,5 @@ public interface RankingService {
 
     void updateRankings(ChessMatch newMatch);
 
-    public void recalculateLeaderboard(String ebonyId, int newEbonyRank, String ivoryId, int newIvoryRank);
+    void recalculateLeaderboard(String ebonyId, int newEbonyRank, String ivoryId, int newIvoryRank);
 }
