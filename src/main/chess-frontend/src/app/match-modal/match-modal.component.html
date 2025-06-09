@@ -24,7 +24,7 @@
     <mat-select formControlName="winner">
       <mat-option value="EBONY">EBONY</mat-option>
       <mat-option value="IVORY">IVORY</mat-option>
-      <mat-option value="TIE">TIE</mat-option>
+      <mat-option value="DRAW">DRAW</mat-option>
     </mat-select>
   </mat-form-field>
 
@@ -36,10 +36,10 @@
   </mat-form-field>
 
   <div style="margin-left: 1.5rem">
-    <button type="button"
+    <button type="submit"
             class="btn btn-dark modal-button"
-            [disabled]="isSaveButtonDisabled()"
-    >Save Match
+            [disabled]="isSaveButtonDisabled()">
+      Save Match
     </button>
     <button type="button" class="btn btn-dark modal-button" (click)="closeModal()">Close</button>
   </div>

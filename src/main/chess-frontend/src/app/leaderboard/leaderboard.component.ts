@@ -67,7 +67,9 @@ export class LeaderboardComponent implements OnInit {
       next: (leaderboardArr) => {
         this.dataSource.data = leaderboardArr;
         if (this.authService.isLoggedIn()) {
-          this.displayedColumns.push('actions');
+          if (!this.displayedColumns.indexOf('actions')) {
+            this.displayedColumns.push('actions');
+          }
           this.isLoggedIn = true;
         }
         this.isLoading = false;

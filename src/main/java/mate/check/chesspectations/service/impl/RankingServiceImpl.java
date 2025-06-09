@@ -55,10 +55,9 @@ public class RankingServiceImpl implements RankingService {
                 }
             }
             case DRAW -> {
-                System.out.println("DRAW");
                 boolean areAdjacent = Math.abs(ebonyRank - ivoryRank) == 1;
                 if (!areAdjacent) {
-                    if (ivoryRank < ebonyRank) {
+                    if (ivoryRank > ebonyRank) {
                         newIvoryRank = ivoryRank - 1;
                     } else {
                         newEbonyRank = ebonyRank - 1;
