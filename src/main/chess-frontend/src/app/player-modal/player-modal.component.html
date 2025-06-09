@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>Player Detail</h2>
 
-<form [formGroup]="playerForm">
+<form [formGroup]="playerForm" (ngSubmit)="savePlayer(playerForm.getRawValue())">
   <mat-form-field>
     <mat-label>Rank</mat-label>
     <input matInput formControlName="ranking" [readOnly]="true">
@@ -35,9 +35,7 @@
   <div style="margin-left: 1.5rem">
     <button *ngIf="!isEditable" type="button" class="btn btn-dark modal-button" (click)="editPlayer()">Update Player
     </button>
-    <button *ngIf="isEditable" type="button" class="btn btn-dark modal-button"
-            (click)="savePlayer(playerForm.getRawValue())">Save Player
-    </button>
+    <button *ngIf="isEditable" type="submit" class="btn btn-dark modal-button">Save Player</button>
     <button type="button" class="btn btn-dark modal-button" (click)="removePlayer(playerForm.getRawValue())">Remove
       Player
     </button>
