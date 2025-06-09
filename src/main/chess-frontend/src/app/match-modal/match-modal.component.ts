@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialogRef, MatDialogTitle} from "@angular/material/dialog";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {LeaderboardService} from '../leaderboard/leaderboard.service';
+import {LeaderboardService} from '../services/leaderboard.service';
 import {PlayerNameRank} from '../model/PlayerNameRank';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectChange, MatSelectModule} from '@angular/material/select';
@@ -120,9 +120,5 @@ export class MatchModalComponent implements OnInit {
   // @ts-ignore
   setErrorMessage(err) {
     return this.errorMessage = err.error?.message || 'An unexpected error has occurred. Please try again later.';
-  }
-
-  log(event: any) {
-    console.log('Ebony selected:', this.chessMatchForm.value.ebonyPlayerId);
   }
 }

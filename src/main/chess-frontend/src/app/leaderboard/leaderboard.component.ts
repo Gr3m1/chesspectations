@@ -13,13 +13,16 @@ import {
   MatTable,
   MatTableDataSource
 } from '@angular/material/table';
-import {LeaderboardService} from './leaderboard.service';
+import {LeaderboardService} from '../services/leaderboard.service';
 import {MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {PlayerModalComponent} from '../player-modal/player-modal.component';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {PlayerRank} from '../model/PlayerRank';
 import {MatchModalComponent} from '../match-modal/match-modal.component';
+import {LoginComponent} from '../login/login.component';
+import {NgIf} from '@angular/common';
+import {AuthService} from '../services/auth.service';
 
 @Component({
   selector: 'app-leaderboard',
@@ -36,18 +39,22 @@ import {MatchModalComponent} from '../match-modal/match-modal.component';
     MatColumnDef,
     MatIconButton,
     MatIcon,
+    NgIf,
   ],
   templateUrl: './leaderboard.component.html',
   styleUrl: './leaderboard.component.css'
 })
 export class LeaderboardComponent implements OnInit {
-  displayedColumns: string[] = ['ranking', 'playerName', 'gamesPlayed', 'actions'];
+  displayedColumns: string[] = ['ranking', 'playerName', 'gamesPlayed'];
   dataSource = new MatTableDataSource<Leaderboard>();
   errorMessage: string = '';
   displayError: boolean = false;
   isLoading = true;
+  isLoggedIn = false;
+  username: string = '';
 
   constructor(private leaderboardService: LeaderboardService,
+              private authService: AuthService,
               private dialog: MatDialog) {
   }
 
@@ -59,6 +66,10 @@ export class LeaderboardComponent implements OnInit {
     this.leaderboardService.getLeaderboard().subscribe({
       next: (leaderboardArr) => {
         this.dataSource.data = leaderboardArr;
+        if (this.authService.isLoggedIn()) {
+          this.displayedColumns.push('actions');
+          this.isLoggedIn = true;
+        }
         this.isLoading = false;
       },
       error: (err) => {
@@ -140,6 +151,36 @@ export class LeaderboardComponent implements OnInit {
       }
     })
     this.isLoading = false;
+  }
+
+  openLoginModal(): MatDialogRef<LoginComponent> {
+    return this.dialog.open(LoginComponent, {
+      width: '40vw',
+      height: '40vh',
+      maxWidth: '100vw',
+      panelClass: 'custom-modal-class',
+    });
+  }
+
+  login() {
+    const dialogRef = this.openLoginModal();
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.validationResult) {
+        this.isLoggedIn = true;
+        this.username = result?.username;
+        this.displayedColumns.push('actions');
+      } else {
+        console.log("Login failed")
+        this.isLoggedIn = false;
+      }
+    });
+    this.isLoggedIn = false;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.isLoggedIn = false;
+    this.username = '';
   }
 
   // @ts-ignore

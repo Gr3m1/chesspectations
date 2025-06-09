@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Login</h2>
+
+<form [formGroup]="loginForm" (ngSubmit)="login()">
+  <mat-form-field>
+    <mat-label>Username</mat-label>
+    <input matInput formControlName="username">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Password</mat-label>
+    <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" required>
+    <mat-icon matSuffix (click)="hide = !hide">{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+  </mat-form-field>
+
+  <div style="margin-left: 1.5rem">
+    <button
+      type=submit
+      class="btn btn-dark modal-button"
+      [disabled]="isLoginButtonDisabled()">
+      Login
+    </button>
+    <button type="button" class="btn btn-dark modal-button" (click)="closeModal()">Cancel</button>
+  </div>
+</form>

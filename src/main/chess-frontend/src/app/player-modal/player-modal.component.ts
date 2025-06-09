@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
 import {PlayerRank} from '../model/PlayerRank';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {LeaderboardService} from '../leaderboard/leaderboard.service';
+import {LeaderboardService} from '../services/leaderboard.service';
 import {Leaderboard} from '../model/Leaderboard';
 import {NgIf} from '@angular/common';
 import {MatFormFieldModule} from '@angular/material/form-field';

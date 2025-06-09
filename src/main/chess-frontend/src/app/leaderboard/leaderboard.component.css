@@ -48,6 +48,11 @@
   float: left;
 }
 
+.button-login {
+  float: right;
+  margin-right: 10vw;
+}
+
 table {
   width: 100%;
 }

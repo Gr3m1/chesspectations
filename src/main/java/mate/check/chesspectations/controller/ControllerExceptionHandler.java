@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.security.auth.login.LoginException;
+
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
@@ -23,5 +25,10 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<String> handleBadRequestException(BadRequestException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Uh oh! Something went wrong!");
+    }
+
+    @ExceptionHandler(LoginException.class)
+    public ResponseEntity<String> handleLoginException(LoginException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
 }

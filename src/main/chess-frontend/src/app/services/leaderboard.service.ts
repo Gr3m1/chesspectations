@@ -6,11 +6,15 @@ import {PlayerDetails} from "../model/PlayerDetails";
 import {PlayerRank} from '../model/PlayerRank';
 import {ChessMatch} from '../model/ChessMatch';
 import {PlayerNameRank} from '../model/PlayerNameRank';
+import {AuthService} from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LeaderboardService {
+  username = 'frontend';
+  password = 'password';
+
   private baseUrl = 'http://localhost:8080/v1'
 
   private getLeaderboardUrl = `${this.baseUrl}/leaderboard`;
@@ -19,34 +23,43 @@ export class LeaderboardService {
   private addMatchUrl = `${this.baseUrl}/leaderboard/matches`;
   private updatePlayerDetailUrl = `${this.baseUrl}/players/update`;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService) {
   }
 
+  // no auth
   getLeaderboard(): Observable<Leaderboard[]> {
     return this.http.get<Leaderboard[]>(this.getLeaderboardUrl);
   }
 
+  // admin only - go through auth service
   getPlayerById(playerId: string): Observable<PlayerRank> {
-    return this.http.get<PlayerRank>(`${this.baseUrl}/players/byId/${playerId}`);
+    return this.authService.get<PlayerRank>(`${this.baseUrl}/players/byId/${playerId}`);
   }
 
+  // no auth
   getAllPlayers(): Observable<PlayerNameRank[]> {
     return this.http.get<PlayerNameRank[]>(this.getPlayersUrl);
   }
 
+  // admin only - go through auth service
   addNewPlayer(playerDetails: PlayerDetails): Observable<Leaderboard[]> {
-    return this.http.post<Leaderboard[]>(this.addPlayerUrl, playerDetails);
+    return this.authService.post<Leaderboard[]>(this.addPlayerUrl, playerDetails);
   }
 
+  // admin only - go through auth service
   addMatch(chessMatch: ChessMatch): Observable<Leaderboard[]> {
-    return this.http.post<Leaderboard[]>(this.addMatchUrl, chessMatch);
+    return this.authService.post<Leaderboard[]>(this.addMatchUrl, chessMatch);
   }
 
+  // admin only - go through auth service
   updatePlayer(playerDetails: PlayerDetails): Observable<Leaderboard[]> {
-    return this.http.put<Leaderboard[]>(this.updatePlayerDetailUrl, playerDetails);
+    return this.authService.put<Leaderboard[]>(this.updatePlayerDetailUrl, playerDetails);
   }
 
+  // admin only - go through auth service
   removePlayer(playerId: string): Observable<Leaderboard[]> {
-    return this.http.delete<Leaderboard[]>(`${this.baseUrl}/players/removePlayer/${playerId}`);
+    return this.authService.delete<Leaderboard[]>(`${this.baseUrl}/players/removePlayer/${playerId}`);
   }
 }
