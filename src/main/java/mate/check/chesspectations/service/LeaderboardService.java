@@ -1,7 +1,6 @@
 package mate.check.chesspectations.service;
 
 import mate.check.chesspectations.exception.GenericException;
-import mate.check.chesspectations.model.ChessMatch;
 import mate.check.chesspectations.model.Leaderboard;
 
 import java.util.List;
@@ -9,8 +8,6 @@ import java.util.List;
 public interface LeaderboardService {
 
     List<Leaderboard> getLeaderboard() throws GenericException;
-
-    List<Leaderboard> addChessMatch(ChessMatch chessMatch) throws GenericException;
 
     List<Leaderboard> addNewPlayer(String playerId) throws GenericException;
 }

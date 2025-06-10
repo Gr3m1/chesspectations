@@ -95,6 +95,24 @@ public abstract class TestConstants {
         return playerRank;
     }
 
+    public static List<ChessMatchWithNames> getMatchHistory() {
+        List<ChessMatchWithNames> matchHistory = new ArrayList<>();
+
+        ChessMatchWithNames match1 = new ChessMatchWithNames();
+        match1.setEbonyPlayerId("123abc");
+        match1.setEbonyName("James Jeffreys");
+        match1.setEbonyRank(1);
+        match1.setIvoryPlayerId("123abc");
+        match1.setIvoryName("Lil Timmy");
+        match1.setIvoryRank(3);
+        match1.setDatePlayed(LocalDate.now());
+        match1.setWinner(Winner.IVORY);
+
+        matchHistory.add(match1);
+
+        return matchHistory;
+    }
+
     public static ChessMatch getChessMatch() {
         ChessMatch chessMatch = new ChessMatch();
 

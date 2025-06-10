@@ -1,15 +1,13 @@
 package mate.check.chesspectations.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mate.check.chesspectations.model.ChessMatch;
 import mate.check.chesspectations.model.Leaderboard;
 import mate.check.chesspectations.service.LeaderboardService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -27,13 +25,5 @@ public class LeaderboardController {
         log.info("Starting call to get all player details");
         List<Leaderboard> leaderboard = leaderboardService.getLeaderboard();
         return ResponseEntity.ok(leaderboard);
-    }
-
-    // only admin can add matches
-    @PostMapping("/matches")
-    public ResponseEntity<List<Leaderboard>> addChessMatch(@RequestBody @Valid ChessMatch chessMatch) throws Exception {
-        log.info("Starting call to add new chess match");
-        List<Leaderboard> newLeaderboard = leaderboardService.addChessMatch(chessMatch);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newLeaderboard);
     }
 }

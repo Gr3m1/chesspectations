@@ -23,17 +23,17 @@ import {Leaderboard} from '../model/Leaderboard';
     MatDatepickerModule,
     MatInputModule,
   ],
-  templateUrl: './match-modal.component.html',
-  styleUrl: './match-modal.component.css'
+  templateUrl: './add-match-modal.component.html',
+  styleUrl: './add-match-modal.component.css'
 })
-export class MatchModalComponent implements OnInit {
+export class AddMatchModalComponent implements OnInit {
   chessMatchForm!: FormGroup;
   errorMessage: string = '';
   displayError: boolean = false;
   players: PlayerNameRank[] = [];
 
   constructor(
-    private dialogRef: MatDialogRef<MatchModalComponent>,
+    private dialogRef: MatDialogRef<AddMatchModalComponent>,
     private formBuilder: FormBuilder,
     private leaderboardService: LeaderboardService,
   ) {

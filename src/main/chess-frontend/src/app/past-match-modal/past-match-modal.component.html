@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>Chess Match History</h2>
+
+<div class="history-container">
+  <table mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="ebonyName">
+      <th mat-header-cell *matHeaderCellDef class="cell">Ebony Player Name</th>
+      <td mat-cell *matCellDef="let match" class="cell cell-data"> {{ match.ebonyName }} (Rank {{ match.ebonyRank }}) </td>
+    </ng-container>
+    <ng-container matColumnDef="ivoryName">
+      <th mat-header-cell *matHeaderCellDef class="cell">Ivory Player Name</th>
+      <td mat-cell *matCellDef="let match" class="cell cell-data"> {{ match.ivoryName }} (Rank {{ match.ivoryRank }}) </td>
+    </ng-container>
+    <ng-container matColumnDef="datePlayed">
+      <th mat-header-cell *matHeaderCellDef class="cell">Date of Match</th>
+      <td mat-cell *matCellDef="let match" class="cell cell-data"> {{ match.datePlayed }} </td>
+    </ng-container>
+    <ng-container matColumnDef="winner">
+      <th mat-header-cell *matHeaderCellDef class="cell">Winner Player Name</th>
+      <td mat-cell *matCellDef="let match" class="cell cell-data"> {{ match.winner }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table-headers"></tr>
+    <tr mat-row *matRowDef="let myRowData; columns: displayedColumns"></tr>
+  </table>
+</div>
+
+<div class="leaderboard-container">
+  <h2 class="error-message">{{ errorMessage }}</h2>
+</div>
+
+<div class="history-buttons">
+  <button type="button" class="btn btn-dark modal-button" (click)="closeModal()">Close</button>
+</div>
+

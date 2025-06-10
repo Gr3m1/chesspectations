@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MatchModalComponent } from './match-modal.component';
+import { AddMatchModalComponent } from './add-match-modal.component';
 
-describe('MatchModalComponent', () => {
-  let component: MatchModalComponent;
-  let fixture: ComponentFixture<MatchModalComponent>;
+describe('AddMatchModalComponent', () => {
+  let component: AddMatchModalComponent;
+  let fixture: ComponentFixture<AddMatchModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MatchModalComponent]
+      imports: [AddMatchModalComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MatchModalComponent);
+    fixture = TestBed.createComponent(AddMatchModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

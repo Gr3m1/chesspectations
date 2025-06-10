@@ -1,0 +1,12 @@
+.history-container {
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  align-items: center;
+  margin: 0 auto;
+  width: 90%;
+}
+
+.history-buttons {
+  align-self: center;
+}

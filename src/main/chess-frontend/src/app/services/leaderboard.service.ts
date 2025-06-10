@@ -7,6 +7,7 @@ import {PlayerRank} from '../model/PlayerRank';
 import {ChessMatch} from '../model/ChessMatch';
 import {PlayerNameRank} from '../model/PlayerNameRank';
 import {AuthService} from './auth.service';
+import {ChessMatchWithNames} from '../model/ChessMatchWithNames';
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +19,9 @@ export class LeaderboardService {
   private baseUrl = 'http://localhost:8080/v1'
 
   private getLeaderboardUrl = `${this.baseUrl}/leaderboard`;
-  private getPlayersUrl = `${this.baseUrl}/players`;
+  private playersUrl = `${this.baseUrl}/players`;
   private addPlayerUrl = `${this.baseUrl}/players/newPlayer`;
-  private addMatchUrl = `${this.baseUrl}/leaderboard/matches`;
+  private matchUrl = `${this.baseUrl}/chessMatch`;
   private updatePlayerDetailUrl = `${this.baseUrl}/players/update`;
 
   constructor(
@@ -33,14 +34,20 @@ export class LeaderboardService {
     return this.http.get<Leaderboard[]>(this.getLeaderboardUrl);
   }
 
+  // no auth
+  getPastMatches(playerId: string): Observable<ChessMatchWithNames[]> {
+    console.log("getPastMatches")
+    return this.http.get<ChessMatchWithNames[]>(`${this.matchUrl}/history/${playerId}`);
+  }
+
   // admin only - go through auth service
   getPlayerById(playerId: string): Observable<PlayerRank> {
-    return this.authService.get<PlayerRank>(`${this.baseUrl}/players/byId/${playerId}`);
+    return this.authService.get<PlayerRank>(`${this.playersUrl}/byId/${playerId}`);
   }
 
   // admin only - go through auth service
   getAllPlayers(): Observable<PlayerNameRank[]> {
-    return this.authService.get<PlayerNameRank[]>(`${this.getPlayersUrl}`);
+    return this.authService.get<PlayerNameRank[]>(`${this.playersUrl}`);
   }
 
   // admin only - go through auth service
@@ -50,7 +57,7 @@ export class LeaderboardService {
 
   // admin only - go through auth service
   addMatch(chessMatch: ChessMatch): Observable<Leaderboard[]> {
-    return this.authService.post<Leaderboard[]>(this.addMatchUrl, chessMatch);
+    return this.authService.post<Leaderboard[]>(`${this.matchUrl}/addMatch`, chessMatch);
   }
 
   // admin only - go through auth service
@@ -60,6 +67,6 @@ export class LeaderboardService {
 
   // admin only - go through auth service
   removePlayer(playerId: string): Observable<Leaderboard[]> {
-    return this.authService.delete<Leaderboard[]>(`${this.baseUrl}/players/removePlayer/${playerId}`);
+    return this.authService.delete<Leaderboard[]>(`${this.playersUrl}/removePlayer/${playerId}`);
   }
 }
