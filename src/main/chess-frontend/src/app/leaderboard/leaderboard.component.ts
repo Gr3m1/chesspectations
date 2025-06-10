@@ -158,7 +158,7 @@ export class LeaderboardComponent implements OnInit {
   openLoginModal(): MatDialogRef<LoginComponent> {
     return this.dialog.open(LoginComponent, {
       width: '40vw',
-      height: '40vh',
+      height: '30vh',
       maxWidth: '100vw',
       panelClass: 'custom-modal-class',
     });
@@ -172,7 +172,6 @@ export class LeaderboardComponent implements OnInit {
         this.username = result?.username;
         this.displayedColumns.push('actions');
       } else {
-        console.log("Login failed")
         this.isLoggedIn = false;
       }
     });
@@ -181,6 +180,7 @@ export class LeaderboardComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+    this.displayedColumns = this.displayedColumns.filter(col => col !== 'actions');
     this.isLoggedIn = false;
     this.username = '';
   }

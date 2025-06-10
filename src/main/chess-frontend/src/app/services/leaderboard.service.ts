@@ -38,9 +38,9 @@ export class LeaderboardService {
     return this.authService.get<PlayerRank>(`${this.baseUrl}/players/byId/${playerId}`);
   }
 
-  // no auth
+  // admin only - go through auth service
   getAllPlayers(): Observable<PlayerNameRank[]> {
-    return this.http.get<PlayerNameRank[]>(this.getPlayersUrl);
+    return this.authService.get<PlayerNameRank[]>(`${this.getPlayersUrl}`);
   }
 
   // admin only - go through auth service

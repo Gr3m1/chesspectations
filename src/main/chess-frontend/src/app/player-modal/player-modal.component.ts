@@ -51,6 +51,10 @@ export class PlayerModalComponent implements OnInit {
       dateOfBirth: [{value: this.data.player.dateOfBirth, disabled: !this.data.shouldEdit}],
       gamesPlayed: [{value: this.data.player.gamesPlayed, disabled: true}],
     })
+
+    if (this.data.player.id !== '') {
+      this.existingPlayer = true;
+    }
   }
 
   editPlayer() {
@@ -81,16 +85,6 @@ export class PlayerModalComponent implements OnInit {
         }
       })
     }
-
-    this.leaderboardService.updatePlayer(newPlayer).subscribe({
-      next: (leaderboardList: Leaderboard[]) => {
-        this.dialogRef.close(leaderboardList);
-      },
-      error: (err) => {
-        this.setErrorMessage(err);
-        this.displayError = true;
-      }
-    });
   }
 
   removePlayer(player: PlayerRank) {

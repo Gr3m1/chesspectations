@@ -23,7 +23,7 @@ public class PlayerDetailsController {
 
     private final PlayerDetailsService playerDetailsService;
 
-    // only frontend user can call this
+    // only admin user can call this
     @GetMapping
     public ResponseEntity<List<PlayerNameRank>> getAllPlayers() throws Exception {
         log.info("Starting call to get all players");

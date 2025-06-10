@@ -27,3 +27,8 @@ form {
   align-self: end;
   margin: 2px;
 }
+
+.required-text {
+  font-size: 0.8rem;
+  color: #b30000;
+}

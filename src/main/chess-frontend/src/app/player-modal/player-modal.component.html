@@ -32,11 +32,11 @@
     <input matInput formControlName="gamesPlayed" [readOnly]="true">
   </mat-form-field>
 
-  <div style="margin-left: 1.5rem">
+  <div class="player-buttons">
     <button *ngIf="!isEditable" type="button" class="btn btn-dark modal-button" (click)="editPlayer()">Update Player
     </button>
     <button *ngIf="isEditable" type="submit" class="btn btn-dark modal-button">Save Player</button>
-    <button type="button" class="btn btn-dark modal-button" (click)="removePlayer(playerForm.getRawValue())">Remove
+    <button *ngIf="existingPlayer" type="button" class="btn btn-dark modal-button" (click)="removePlayer(playerForm.getRawValue())">Remove
       Player
     </button>
     <button type="button" class="btn btn-dark modal-button" (click)="closeModal()">Close</button>

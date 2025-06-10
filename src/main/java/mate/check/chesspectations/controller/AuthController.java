@@ -25,6 +25,6 @@ public class AuthController {
             return new ResponseEntity<>(validated, HttpStatus.OK);
         }
 
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.badRequest().body(validated);
     }
 }

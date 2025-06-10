@@ -17,6 +17,7 @@
 .leaderboard-container {
   padding: 20px;
   background: #fff;
+  border-radius: 8px;
   align-items: center;
   margin: 0 auto;
   width: 80%;
@@ -24,6 +25,11 @@
 
 .leaderboard-container:hover {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.leaderboard-container > div:last-child {
+  margin-top: 1rem;
+  text-align: right;
 }
 
 .table-headers {
@@ -51,6 +57,22 @@
 .button-login {
   float: right;
   margin-right: 10vw;
+}
+
+.button-user {
+  cursor: default !important;
+  pointer-events: none;
+}
+
+.button-user:hover {
+  background-color: #343a40;
+}
+
+.button-row {
+  display: flex;
+  justify-content: left;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 table {

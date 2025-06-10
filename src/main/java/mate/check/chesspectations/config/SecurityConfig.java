@@ -21,18 +21,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v1/players/byId/", "/v1/players/newPlayer", "/v1/players/update", "/v1/players/removePlayer/").hasRole("ADMIN")
-                        .requestMatchers("/v1/leaderboard/").hasRole("ADMIN")
-                        .anyRequest().permitAll())
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/")
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
-                )
-                .httpBasic(Customizer.withDefaults());
+                        .requestMatchers("/v1/players/**", "/v1/leaderboard/matches").hasRole("ADMIN")
+                        .anyRequest().permitAll());
         return http.build();
     }
 

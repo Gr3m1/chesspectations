@@ -72,6 +72,6 @@ export class LoginComponent implements OnInit {
 
   // @ts-ignore
   setErrorMessage(err) {
-    return this.errorMessage = err.error?.message || 'An unexpected error has occurred. Please try again later.';
+    return this.errorMessage = err.error?.message || 'Invalid username or password';
   }
 }

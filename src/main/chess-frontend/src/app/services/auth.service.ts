@@ -8,8 +8,6 @@ import {Credentials} from '../model/Credentials';
 })
 export class AuthService {
   private credentials: Credentials | null = null;
-  errorMessage: string = '';
-  displayError: boolean = false;
 
   constructor(private http: HttpClient) {
   }
@@ -60,10 +58,5 @@ export class AuthService {
     const {username, password} = this.credentials;
     const token = btoa(`${username}:${password}`);
     return new HttpHeaders({'Authorization': `Basic ${token}`});
-  }
-
-  // @ts-ignore
-  setErrorMessage(err) {
-    return this.errorMessage = err.error?.message || 'An unexpected error has occurred. Please try again later.';
   }
 }

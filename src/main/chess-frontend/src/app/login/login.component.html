@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Login</h2>
+<h2 mat-dialog-title>Login <span class="required-text">* required</span></h2>
 
 <form [formGroup]="loginForm" (ngSubmit)="login()">
   <mat-form-field>
@@ -12,7 +12,11 @@
     <mat-icon matSuffix (click)="hide = !hide">{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
   </mat-form-field>
 
-  <div style="margin-left: 1.5rem">
+  <div class="login-error">
+    <h5 class="error-message">{{ errorMessage }}</h5>
+  </div>
+
+  <div class="login-buttons">
     <button
       type=submit
       class="btn btn-dark modal-button"

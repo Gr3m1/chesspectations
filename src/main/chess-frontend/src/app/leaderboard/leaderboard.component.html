@@ -15,7 +15,7 @@
     </div>
   } @else {
     <div>
-      <button type="button" class="btn btn-dark button-login" disabled>Logged in as {{ username }}</button>
+      <span class="btn btn-dark button-login button-user">Logged in as {{ username }}</span>
       <br>
       <br>
       <button type="button" class="btn btn-dark button-login" (click)="logout()">Logout</button>
@@ -50,8 +50,7 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table-headers"></tr>
         <tr mat-row *matRowDef="let myRowData; columns: displayedColumns"></tr>
       </table>
-      <br>
-      <div>
+      <div class="button-row">
         <button
           type="button"
           class="btn btn-dark button-spacing"

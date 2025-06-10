@@ -1,8 +1,3 @@
-.success {
-  color: green;
-  font-weight: bold;
-}
-.error {
-  color: red;
-  font-weight: bold;
+.match-buttons {
+  align-self: center;
 }
