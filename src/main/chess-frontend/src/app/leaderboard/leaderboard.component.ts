@@ -69,6 +69,7 @@ export class LeaderboardComponent implements OnInit {
     this.leaderboardService.getLeaderboard().subscribe({
       next: (leaderboardArr) => {
         this.dataSource.data = leaderboardArr;
+        console.log(this.authService.isLoggedIn());
         if (this.authService.isLoggedIn()) {
           this.isLoggedIn = true;
         }
@@ -99,6 +100,7 @@ export class LeaderboardComponent implements OnInit {
         const dialogRef = this.openPastMatchesModal(matches);
         dialogRef.afterClosed().subscribe((returnedData: Leaderboard[] | undefined) => {
           this.getLeaderboard();
+          this.isLoggedIn = this.authService.isLoggedIn();
           this.isLoading = false;
         })
       },
@@ -132,6 +134,7 @@ export class LeaderboardComponent implements OnInit {
           } else {
             this.getLeaderboard();
           }
+          this.isLoggedIn = this.authService.isLoggedIn();
         })
         this.isLoading = false;
       },

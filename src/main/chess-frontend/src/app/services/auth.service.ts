@@ -17,7 +17,7 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return this.credentials !== null;
+    return !!(this.credentials && this.credentials.username);
   }
 
   login() {
@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   logout() {
-    this.setCredentials(null, null);
+    this.credentials = null;
   }
 
   get<T>(url: string): Observable<T> {

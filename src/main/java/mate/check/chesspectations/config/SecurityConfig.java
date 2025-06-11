@@ -22,14 +22,15 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v1/players/**", "/v1/leaderboard/matches").hasRole("ADMIN")
-                        .anyRequest().permitAll());
+                        .anyRequest().permitAll())
+                .httpBasic(Customizer.withDefaults());
         return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-        var adminUser = User.builder()
-                .username("admin")
+        var adminUser = User
+                .withUsername("admin")
                 .password(encoder.encode("admin"))
                 .roles("ADMIN")
                 .build();

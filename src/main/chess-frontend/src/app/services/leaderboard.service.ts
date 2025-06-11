@@ -36,7 +36,6 @@ export class LeaderboardService {
 
   // no auth
   getPastMatches(playerId: string): Observable<ChessMatchWithNames[]> {
-    console.log("getPastMatches")
     return this.http.get<ChessMatchWithNames[]>(`${this.matchUrl}/history/${playerId}`);
   }
 

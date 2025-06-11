@@ -10,3 +10,9 @@
 .history-buttons {
   align-self: center;
 }
+
+.error-message {
+  font-size: 1.5rem;
+  color: #b30000;
+  text-align: center;
+}
