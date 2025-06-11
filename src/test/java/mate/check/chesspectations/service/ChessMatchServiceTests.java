@@ -4,6 +4,7 @@ import mate.check.chesspectations.TestConstants;
 import mate.check.chesspectations.enumeration.Winner;
 import mate.check.chesspectations.exception.GenericException;
 import mate.check.chesspectations.model.ChessMatch;
+import mate.check.chesspectations.model.ChessMatchWithNames;
 import mate.check.chesspectations.repository.ChessMatchRepository;
 import mate.check.chesspectations.repository.PlayerDetailRepository;
 import mate.check.chesspectations.service.impl.ChessMatchServiceImpl;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,11 +46,25 @@ public class ChessMatchServiceTests {
     void testGetMatchHistorySuccess() throws GenericException {
         String playerId = "123abc";
         when(chessMatchRepository.getHistoryById(anyString())).thenReturn(TestConstants.getMatchHistory());
+
+        List<ChessMatchWithNames> result = chessMatchService.getHistory(playerId);
+
+        verify(chessMatchRepository).getHistoryById(anyString());
+        assert(!result.isEmpty());
+        assert(result.size() == 1);
+        assertEquals(TestConstants.getMatchHistory(), result);
     }
 
     @Test
     void testGetMatchHistoryFailure() {
+        String playerId = "123abc";
+        when(chessMatchRepository.getHistoryById(anyString())).thenThrow(new RuntimeException("Simulated DB failure"));
 
+        GenericException exception = assertThrows(GenericException.class, () -> {
+            chessMatchService.getHistory(playerId);
+        });
+
+        assertEquals("No history to show.", exception.getMessage());
     }
 
     // add match
